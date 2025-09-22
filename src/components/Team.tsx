@@ -15,7 +15,7 @@ export default function Team() {
     {
       name: "Chandni",
       role: "Internal Management",
-      qualification: "School Student",
+      qualification: "Computer Science",
       image: "/team3.jpg",
     },
   ];
