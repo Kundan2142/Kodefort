@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 
 export default function Navbar() {
@@ -7,13 +8,20 @@ export default function Navbar() {
 
   return (
     <nav className="bg-white shadow-md sticky top-0 z-50">
-      <div className="container mx-auto flex justify-between items-center py-4 px-6">
+      <div className="container mx-auto flex justify-between items-center py-3 px-6">
         {/* Logo */}
-        <Link
-          href="/"
-          className="text-2xl font-bold text-blue-800 hover:text-blue-900"
-        >
-          Kodefort
+        <Link href="/" className="flex items-center">
+          <Image
+            src="/tech/kodefort-logo.png"        // path to your logo in public folder
+            alt="Kodefort Logo"
+            width={50}            // smaller width
+            height={10}            // smaller height
+            className="mr-1"
+          />
+          {/* Optional text next to logo */}
+          <span className="text-xl font-bold text-blue-800 hover:text-blue-900">
+            Kodefort
+          </span>
         </Link>
 
         {/* Navigation Links */}
