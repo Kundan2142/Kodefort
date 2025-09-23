@@ -6,7 +6,9 @@ export default function ContactForm() {
   const [form, setForm] = useState({ name: "", email: "", message: "" });
   const [status, setStatus] = useState("");
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
@@ -29,9 +31,15 @@ export default function ContactForm() {
   };
 
   return (
-    <section id="contact" className="py-16">
-      <h2 className="text-3xl font-bold text-center mb-8">Contact Us</h2>
-      <form onSubmit={handleSubmit} className="max-w-lg mx-auto bg-white shadow p-8 rounded-lg">
+    <section id="contact" className="py-16 bg-gray-50">
+      <h2 className="text-3xl sm:text-4xl font-bold text-center mb-8 text-blue-800">
+        Contact Us
+      </h2>
+
+      <form
+        onSubmit={handleSubmit}
+        className="max-w-lg mx-auto bg-white shadow-lg p-6 sm:p-8 rounded-xl"
+      >
         <input
           type="text"
           name="name"
@@ -39,7 +47,7 @@ export default function ContactForm() {
           value={form.name}
           onChange={handleChange}
           required
-          className="w-full mb-4 p-3 border rounded"
+          className="w-full mb-4 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
         />
         <input
           type="email"
@@ -48,7 +56,7 @@ export default function ContactForm() {
           value={form.email}
           onChange={handleChange}
           required
-          className="w-full mb-4 p-3 border rounded"
+          className="w-full mb-4 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
         />
         <textarea
           name="message"
@@ -56,12 +64,14 @@ export default function ContactForm() {
           value={form.message}
           onChange={handleChange}
           required
-          className="w-full mb-4 p-3 border rounded"
+          className="w-full mb-4 p-3 border border-gray-300 rounded-lg h-32 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
         />
-        <button className="bg-blue-600 text-white px-6 py-3 rounded w-full hover:bg-blue-700">
+        <button className="bg-blue-600 text-white px-6 py-3 rounded-lg w-full hover:bg-blue-700 transition-colors duration-200">
           Send
         </button>
-        {status && <p className="mt-4 text-center">{status}</p>}
+        {status && (
+          <p className="mt-4 text-center text-gray-700 font-medium">{status}</p>
+        )}
       </form>
     </section>
   );
