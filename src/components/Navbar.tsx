@@ -8,8 +8,18 @@ export default function Navbar() {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
 
+  // Navigation links
+  const navLinks = [
+    { name: "Services", href: "/#services" },
+    { name: "About", href: "/#about" },
+    { name: "Technologies", href: "/#technologies" },
+    { name: "Team", href: "/#team" },
+    { name: "Contact", href: "/contact" },
+  ];
+
   return (
     <nav className="bg-white shadow-md sticky top-0 z-50">
+      {/* Top bar with logo and hamburger */}
       <div className="container mx-auto flex justify-between items-center py-3 px-6">
         {/* Logo */}
         <Link href="/" className="flex items-center z-50">
@@ -46,62 +56,42 @@ export default function Navbar() {
             )}
           </svg>
         </button>
+
+        {/* Desktop Navigation Links */}
+        <div className="hidden sm:flex sm:items-center sm:space-x-6">
+          {navLinks.map((link) => (
+            <Link
+              key={link.name}
+              href={link.href}
+              className={`text-blue-700 font-medium hover:text-blue-900 ${
+                pathname === link.href ? "text-blue-900 font-semibold" : ""
+              }`}
+            >
+              {link.name}
+            </Link>
+          ))}
+        </div>
       </div>
 
-      {/* Mobile Menu */}
+      {/* Mobile Menu (renders below navbar) */}
       <div
         className={`sm:hidden overflow-hidden transition-all duration-300 bg-white shadow-md ${
           isOpen ? "max-h-60" : "max-h-0"
         }`}
       >
         <div className="flex flex-col px-6 py-3 space-y-2">
-          {pathname === "/" ? (
-            <>
-              <a
-                href="#services"
-                className="text-blue-700 font-medium hover:text-blue-900"
-                onClick={() => setIsOpen(false)}
-              >
-                Services
-              </a>
-              <a
-                href="#about"
-                className="text-blue-700 font-medium hover:text-blue-900"
-                onClick={() => setIsOpen(false)}
-              >
-                About
-              </a>
-            </>
-          ) : (
-            <>
-              <Link
-                href="/#services"
-                className="text-blue-700 font-medium hover:text-blue-900"
-                onClick={() => setIsOpen(false)}
-              >
-                Services
-              </Link>
-              <Link
-                href="/#about"
-                className="text-blue-700 font-medium hover:text-blue-900"
-                onClick={() => setIsOpen(false)}
-              >
-                About
-              </Link>
-            </>
-          )}
-
-          <Link
-            href="/contact"
-            className={`font-medium hover:text-blue-900 ${
-              pathname === "/contact"
-                ? "text-blue-900 font-semibold"
-                : "text-blue-700"
-            }`}
-            onClick={() => setIsOpen(false)}
-          >
-            Contact
-          </Link>
+          {navLinks.map((link) => (
+            <Link
+              key={link.name}
+              href={link.href}
+              className={`text-blue-700 font-medium hover:text-blue-900 ${
+                pathname === link.href ? "text-blue-900 font-semibold" : ""
+              }`}
+              onClick={() => setIsOpen(false)}
+            >
+              {link.name}
+            </Link>
+          ))}
         </div>
       </div>
     </nav>
