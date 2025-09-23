@@ -32,7 +32,8 @@ export default function ContactForm() {
 
   return (
     <section id="contact" className="py-16 bg-gray-50">
-      <h2 className="text-3xl sm:text-4xl font-bold text-center mb-8 text-blue-800">
+      {/* Darker heading */}
+      <h2 className="text-3xl sm:text-4xl font-extrabold text-center mb-8 text-blue-900">
         Contact Us
       </h2>
 
@@ -40,6 +41,7 @@ export default function ContactForm() {
         onSubmit={handleSubmit}
         className="max-w-lg mx-auto bg-white shadow-lg p-6 sm:p-8 rounded-xl"
       >
+        {/* Darker placeholders */}
         <input
           type="text"
           name="name"
@@ -47,7 +49,7 @@ export default function ContactForm() {
           value={form.name}
           onChange={handleChange}
           required
-          className="w-full mb-4 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          className="w-full mb-4 p-3 border border-gray-300 rounded-lg placeholder-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
         />
         <input
           type="email"
@@ -56,7 +58,7 @@ export default function ContactForm() {
           value={form.email}
           onChange={handleChange}
           required
-          className="w-full mb-4 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          className="w-full mb-4 p-3 border border-gray-300 rounded-lg placeholder-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
         />
         <textarea
           name="message"
@@ -64,7 +66,7 @@ export default function ContactForm() {
           value={form.message}
           onChange={handleChange}
           required
-          className="w-full mb-4 p-3 border border-gray-300 rounded-lg h-32 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          className="w-full mb-4 p-3 border border-gray-300 rounded-lg h-32 resize-none placeholder-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
         />
         <button className="bg-blue-600 text-white px-6 py-3 rounded-lg w-full hover:bg-blue-700 transition-colors duration-200">
           Send
