@@ -12,11 +12,9 @@ export default function Home() {
       <Hero />
       <Services />
       <Technologies />
-      <About />
-      
-      <Team />
-      
-      <Footer />
+      <About/>
+      <Team/>
+      <Footer/>
     </>
   );
 }
