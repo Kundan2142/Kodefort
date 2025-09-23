@@ -4,28 +4,27 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 
 export default function Navbar() {
-  const pathname = usePathname(); // get current route
+  const pathname = usePathname();
 
   return (
     <nav className="bg-white shadow-md sticky top-0 z-50">
-      <div className="container mx-auto flex justify-between items-center py-3 px-6">
+      <div className="container mx-auto flex flex-wrap justify-between items-center py-3 px-6">
         {/* Logo */}
-        <Link href="/" className="flex items-center">
+        <Link href="/" className="flex items-center mb-2 sm:mb-0">
           <Image
-            src="/tech/kodefort-logo.png"        // path to your logo in public folder
+            src="/tech/kodefort-logo.png"
             alt="Kodefort Logo"
-            width={50}            // smaller width
-            height={10}            // smaller height
-            className="mr-1"
+            width={50}
+            height={50} // make height proportional to width
+            className="mr-2"
           />
-          {/* Optional text next to logo */}
           <span className="text-xl font-bold text-blue-800 hover:text-blue-900">
             Kodefort
           </span>
         </Link>
 
         {/* Navigation Links */}
-        <div className="space-x-6">
+        <div className="flex flex-wrap gap-4">
           {pathname === "/" ? (
             <>
               <a
@@ -58,7 +57,6 @@ export default function Navbar() {
             </>
           )}
 
-          {/* Contact Link - highlighted if active */}
           <Link
             href="/contact"
             className={`font-medium hover:text-blue-900 ${
