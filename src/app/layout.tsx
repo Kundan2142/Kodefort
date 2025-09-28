@@ -5,9 +5,11 @@ import Navbar from "../components/Navbar";
 export const metadata = {
   title: "Kodefort | Software & Cybersecurity",
   description: "Kodefort - Your trusted partner in software and cybersecurity solutions.",
-  // icons: {
-  //   icon: "favicon.ico", // your logo path in public folder
-  // },
+ icons: {
+  icon: "/favicon.ico",
+  shortcut: "/favicon.ico",
+  apple: "/apple-touch-icon.png", // Optional
+},
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
