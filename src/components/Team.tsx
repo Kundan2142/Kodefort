@@ -1,7 +1,7 @@
 export default function Team() {
   const members = [
     { name: "Kundan Kumar", role: "CEO & Founder", qualification: "M.Tech in Cybersecurity, IIT DELHI", image: "/team1.jpg" },
-    { name: "Khushi Yadav", role: "Managing and Designing", qualification: "Bachelor of Pharmacy", image: "/team2.jpg" },
+    { name: "Khushi ", role: "Managing and Designing", qualification: "Bachelor of Pharmacy", image: "/team2.jpg" },
     { name: "Chandni", role: "Internal Management", qualification: "Computer Science", image: "/team3.jpg" },
   ];
 
