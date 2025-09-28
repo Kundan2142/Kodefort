@@ -89,10 +89,12 @@ export default function FaqAccordion() {
 
   return (
     <div className="max-w-8xl mx-auto px-8 py-10">
-     <h2 className="text-3xl sm:text-4xl font-extrabold text-center mb-12 text-gray-900">
-  Frequently Asked Questions
-</h2>
-
+    <div className="max-w-8xl mx-auto px-8 py-10 bg-white dark:bg-gray-800">
+  <h2 className="text-3xl sm:text-4xl font-extrabold text-center mb-12 text-gray-900 dark:text-white">
+    Frequently Asked Questions
+  </h2>
+  {/* rest of your component */}
+</div>
       <div className="space-y-8">
         {faqData.map((faq, index) => (
           <div
