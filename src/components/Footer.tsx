@@ -95,7 +95,7 @@ export default function Footer() {
       </div>
       <div className="border-t border-gray-700">
         <p className="text-center text-gray-400 py-4">
-          © {new Date().getFullYear()} Kodefort <sup>&#174;</sup>— All Rights Reserved
+          © {new Date().getFullYear()} Kodefort &trade;— All Rights Reserved
         </p>
       </div>
     </footer>
