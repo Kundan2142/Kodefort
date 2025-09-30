@@ -125,7 +125,7 @@ export default function Navbar() {
         {/* Logo */}
         <Link href="/" className="flex items-center z-50">
           <Image
-            src="/tech/kodefort-logo.png"
+            src="/logo.png"
             alt="Kodefort Logo"
             width={50}
             height={50}

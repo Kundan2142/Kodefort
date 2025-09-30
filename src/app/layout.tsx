@@ -9,9 +9,9 @@ export const metadata = {
   title: "Kodefort | Software & Cybersecurity",
   description: "Kodefort - Your trusted partner in software and cybersecurity solutions.",
  icons: {
-  icon: "/favicon.ico",
-  shortcut: "/favicon.ico",
-  apple: "/apple-touch-icon.png", // Optional
+  icon: "/logo.png",
+  shortcut: "/logo.png",
+  apple: "/logo.png", // Optional
 },
 };
 
