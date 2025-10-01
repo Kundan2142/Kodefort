@@ -16,7 +16,7 @@ export default function Home() {
       <About/>
       <Team/>
       <FaqAccordion/>
-      <Footer/>
+      {/* <Footer/> */}
     </>
   );
 }

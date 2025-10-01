@@ -10,7 +10,7 @@ export default function ContactPage() {
         will get back to you as soon as possible.
       </p>
       <ContactForm />
-      <Footer />
+      {/* <Footer /> */}
     </section>
   );
 }
