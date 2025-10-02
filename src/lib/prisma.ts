@@ -17,30 +17,29 @@
 
 // ./src/lib/prisma.ts
 
+// ./src/lib/prisma.ts
+
 import { PrismaClient } from "@prisma/client";
 
-// This is the global variable we declared in global.d.ts.
-// We must declare it again locally to ensure it is defined for use.
-
-// We use 'let' instead of 'const' if we conditionally create it.
-// We cast it to the type we expect to avoid the type conflict.
-let prisma: PrismaClient;
-
-if (process.env.NODE_ENV === "production") {
-  // In production, we always create a new client
-  prisma = new PrismaClient({
-    log: ["error"], // Keep logs minimal in production
-  });
-} else {
-  // In development, use globalThis to preserve the client across hot-reloads
-  if (!globalThis.prisma) {
-    globalThis.prisma = new PrismaClient({
-      log: ["query", "info", "warn", "error"],
-    });
-  }
-  // We cast the global variable back to the specific PrismaClient type
-  prisma = globalThis.prisma as PrismaClient;
+// 1. Declare the global variable type *in this file*
+//    We use 'any' here to allow the type checker to reconcile the global
+//    declaration with the complex inferred type of the local 'prisma' constant.
+declare global {
+  // eslint-disable-next-line no-var
+  var prisma: PrismaClient | undefined | any;
 }
 
-// Export the client
+// 2. Create the client instance
+//    We use globalThis.prisma to ensure a single instance during Next.js hot-reloads.
+const prisma = globalThis.prisma || new PrismaClient({
+    log: ["query", "info", "warn", "error"], // Optional logging config
+});
+
+// 3. Attach the instance to globalThis *only* in development
+//    This prevents the creation of new clients on every hot-reload.
+if (process.env.NODE_ENV !== "production") {
+  globalThis.prisma = prisma;
+}
+
+// 4. Export the client
 export default prisma;
