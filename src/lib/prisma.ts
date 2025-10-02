@@ -1,31 +1,19 @@
-// // lib/prisma.ts
-// import { PrismaClient } from "@/generated/prisma";  // ✅ instead of "@prisma/client"
+import { PrismaClient } from "@/generated/prisma"; // your generated Prisma client
 
-// declare global {
-//   var prisma: PrismaClient | undefined;
-// }
-
-// const prisma = globalThis.prisma || new PrismaClient();
-
-// if (process.env.NODE_ENV !== "production") {
-//   globalThis.prisma = prisma;
-// }
-
-// export default prisma;
-
-
-// lib/prisma.ts
-import { PrismaClient } from "@/generated/prisma";  // use generated path
-
+// Avoid multiple instances in Next.js dev mode
+// eslint-disable-next-line no-var
 declare global {
-  // eslint-disable-next-line no-var
   var prisma: PrismaClient | undefined;
 }
 
-// Use existing global prisma in dev to avoid multiple instances
-const prisma = globalThis.prisma ?? new PrismaClient();
+// Use existing client if available, otherwise create a new one
+export const prisma =
+  globalThis.prisma ??
+  new PrismaClient({
+    log: ["query", "info", "warn", "error"], // optional, useful for debugging
+  });
 
-// Attach to globalThis only in development (Next.js hot reload)
+// Only attach to globalThis in development
 if (process.env.NODE_ENV !== "production") {
   globalThis.prisma = prisma;
 }
