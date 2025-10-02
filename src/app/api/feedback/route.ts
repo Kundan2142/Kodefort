@@ -1,25 +1,19 @@
-import { NextResponse } from "next/server";
+// app/api/feedback/route.ts
 import prisma from "@/lib/prisma";
 
-// src/app/api/feedback/route.ts
-export const runtime = "nodejs";
-
+export const runtime = "nodejs"; // ✅ important for Prisma
 
 export async function POST(req: Request) {
   try {
     const { name, email, message } = await req.json();
 
-    if (!name || !email || !message) {
-      return NextResponse.json({ error: "Missing fields" }, { status: 400 });
-    }
-
     const feedback = await prisma.feedback.create({
       data: { name, email, message },
     });
 
-    return NextResponse.json(feedback);
-  } catch (error: any) {
-    console.error("API error:", error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return new Response(JSON.stringify(feedback), { status: 200 });
+  } catch (err) {
+    console.error(err);
+    return new Response("Error saving feedback", { status: 500 });
   }
 }
