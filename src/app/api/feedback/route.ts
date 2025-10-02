@@ -1,6 +1,10 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 
+// src/app/api/feedback/route.ts
+export const runtime = "nodejs";
+
+
 export async function POST(req: Request) {
   try {
     const { name, email, message } = await req.json();
