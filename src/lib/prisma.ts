@@ -19,8 +19,9 @@
 
 // ./src/lib/prisma.ts
 
-import { PrismaClient } from "@prisma/client";
+// import { PrismaClient } from "@prisma/client";
 
+import { PrismaClient } from "@/generated/prisma";
 // 1. Declare the global variable type *in this file*
 //    We use 'any' here to allow the type checker to reconcile the global
 //    declaration with the complex inferred type of the local 'prisma' constant.
