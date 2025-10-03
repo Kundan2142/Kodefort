@@ -47,27 +47,40 @@
 
 
 
-import { PrismaClient } from "@/generated/prisma";
+// import { PrismaClient } from "@/generated/prisma";
 
-// Extend global type declarations
-declare global {
-  // Allow `prisma` to exist on globalThis without using `any`
-  // `var` is required in declare global for module augmentation
-  // but no eslint-disable needed if typed properly
-  // eslint-disable-next-line no-var
-  var prisma: PrismaClient | undefined;
-}
+// // Extend global type declarations
+// declare global {
+//   // Allow `prisma` to exist on globalThis without using `any`
+//   // `var` is required in declare global for module augmentation
+//   // but no eslint-disable needed if typed properly
+//   // eslint-disable-next-line no-var
+//   var prisma: PrismaClient | undefined;
+// }
 
-// Create the Prisma client instance (reuse if already attached to globalThis)
-const prisma =
-  globalThis.prisma ??
+// // Create the Prisma client instance (reuse if already attached to globalThis)
+// const prisma =
+//   globalThis.prisma ??
+//   new PrismaClient({
+//     log: ["query", "info", "warn", "error"], // optional logging
+//   });
+
+// // Attach to globalThis in development to avoid multiple instances
+// if (process.env.NODE_ENV !== "production") {
+//   globalThis.prisma = prisma;
+// }
+
+// export default prisma;
+
+
+import { PrismaClient } from '@prisma/client';
+
+const globalForPrisma = global as unknown as { prisma: PrismaClient };
+
+export const prisma =
+  globalForPrisma.prisma ||
   new PrismaClient({
-    log: ["query", "info", "warn", "error"], // optional logging
+    log: ['query', 'error', 'warn'],
   });
 
-// Attach to globalThis in development to avoid multiple instances
-if (process.env.NODE_ENV !== "production") {
-  globalThis.prisma = prisma;
-}
-
-export default prisma;
+if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
