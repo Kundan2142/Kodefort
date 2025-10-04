@@ -58,16 +58,20 @@ const attacks: Attack[] = [
 export default function RecentAttacksPage() {
   return (
     <main className="max-w-6xl mx-auto py-12 px-4">
-      <h1 className="text-4xl font-bold text-gray-800 mb-8 text-center">🛡️ Recent Cyber Attacks</h1>
+      <h1 className="text-4xl font-bold mb-8 text-center text-gray-900 dark:text-gray-100">
+        🛡️ Recent Cyber Attacks
+      </h1>
 
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {attacks.map((attack, idx) => (
           <div
             key={idx}
-            className="bg-gradient-to-br from-blue-50 to-white p-5 rounded-xl shadow-md hover:shadow-xl transition-shadow hover:-translate-y-1 transform"
+            className="bg-gradient-to-br from-blue-50 to-white dark:from-gray-800 dark:to-gray-900 p-5 rounded-xl shadow-md hover:shadow-xl transition-shadow hover:-translate-y-1 transform"
           >
-            <h2 className="text-lg font-semibold text-gray-800 mb-2">{attack.title}</h2>
-            <p className="text-gray-600 text-sm mb-4">
+            <h2 className="text-lg font-semibold mb-2 text-gray-800 dark:text-gray-100">
+              {attack.title}
+            </h2>
+            <p className="text-gray-600 dark:text-gray-300 text-sm mb-4">
               {attack.description.length > 120
                 ? attack.description.slice(0, 120) + "…"
                 : attack.description}
@@ -77,18 +81,20 @@ export default function RecentAttacksPage() {
                 href={attack.link}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-sm text-blue-600 hover:underline font-medium"
+                className="text-sm text-blue-600 dark:text-blue-400 hover:underline font-medium"
               >
                 Read more
               </a>
-              <time className="text-xs text-gray-400">{new Date(attack.date).toLocaleDateString()}</time>
+              <time className="text-xs text-gray-400 dark:text-gray-500">
+                {new Date(attack.date).toLocaleDateString()}
+              </time>
             </div>
           </div>
         ))}
       </div>
 
       <div className="mt-10 text-center">
-        <p className="text-gray-500">
+        <p className="text-gray-500 dark:text-gray-400">
           Stay updated on cybersecurity threats and protect your organization from attacks.
         </p>
       </div>
