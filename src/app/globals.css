@@ -57,3 +57,19 @@ html, body {
     transition: background-color 5000s ease-in-out 0s !important;
   }
 }
+
+
+@keyframes gradient-pan {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.animate-gradient-bg {
+  background-size: 200% 200%;
+  animation: gradient-pan 15s ease infinite;
+}
+
+.animate-ping-slow {
+  animation: ping 6s linear infinite;
+}
