@@ -7,11 +7,13 @@ import Footer from "@/components/Footer";
 import Technologies from "@/components/Technologies";
 import FaqAccordion from "@/components/Faq";
 import WhatsAppButton from "@/components/whatapp";
+import RecentCyberAttacks from "@/components/attacks";
 
 export default function Home() {
   return (
     <>
       <Hero />
+      <RecentCyberAttacks/>
       <Services />
       <Technologies />
       <About/>
