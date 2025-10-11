@@ -12,7 +12,7 @@ import RecentCyberAttacks from "@/components/attacks";
 export default function Home() {
   return (
     <>
-      <Hero />
+      {/* <Hero /> */}
       <RecentCyberAttacks/>
       <Services />
       <Technologies />
