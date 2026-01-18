@@ -71,7 +71,7 @@ export default function Footer() {
           <h3 className="text-2xl font-semibold mb-4 text-white">Contact & Address</h3>
           <p className="text-gray-300 leading-relaxed">
             Kodefort<br />
-            Near Laloo Mandal College, Kharkhura<br />
+            Near L. M. College, Kharkhura<br />
             Gaya, Bihar, India<br />
             Phone: +91 6207525287<br />
             Email: <a href="mailto:kundan@kodefort.com" className="text-blue-400 underline">kundan@kodefort.com</a>
