@@ -415,6 +415,7 @@ export default function HeroWithNavbar() {
     { name: "About", href: "/#about" },
     { name: "Technologies", href: "/#technologies" },
     { name: "Team", href: "/#team" },
+    { name: "Internship", href: "/internship" },
     { name: "Contact", href: "/contact" },
   ];
 

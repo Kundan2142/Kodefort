@@ -10,7 +10,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
@@ -20,4 +20,57 @@ model Feedback {
   email     String
   message   String
   createdAt DateTime @default(now())
+}
+
+model Student {
+  id           Int          @id @default(autoincrement())
+  name         String
+  collegeName  String
+  registrationNo String    @unique
+  email        String       @unique
+  mobileNo     String
+  dateOfBirth  DateTime
+  internshipType String    @default("Hybrid (Online)")
+  enrollments  Enrollment[]
+  createdAt    DateTime     @default(now())
+}
+
+model Internship {
+  id          Int          @id @default(autoincrement())
+  name        String       @unique
+  description String
+  price       Int          @default(500) // 500 INR
+  tasks       Task[]
+  enrollments Enrollment[]
+  createdAt   DateTime     @default(now())
+}
+
+model Enrollment {
+  id           Int       @id @default(autoincrement())
+  studentId    Int       @unique
+  internshipId Int
+  student      Student   @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  internship   Internship @relation(fields: [internshipId], references: [id], onDelete: Cascade)
+  payment      Payment?
+  createdAt    DateTime  @default(now())
+}
+
+model Payment {
+  id           Int       @id @default(autoincrement())
+  enrollmentId Int       @unique
+  enrollment   Enrollment @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
+  amount       Int       @default(500)
+  status       String    @default("pending") // pending, completed, failed
+  createdAt    DateTime  @default(now())
+}
+
+model Task {
+  id           Int       @id @default(autoincrement())
+  internshipId Int
+  internship   Internship @relation(fields: [internshipId], references: [id], onDelete: Cascade)
+  title        String
+  description  String
+  youtubeUrl   String?
+  order        Int
+  createdAt    DateTime  @default(now())
 }
