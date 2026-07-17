@@ -27,7 +27,7 @@ export async function POST(request: Request) {
       amount: 500 * 100,
       currency: 'INR',
       receipt: `receipt_${enrollmentId}`,
-      payment_capture: 1,
+      payment_capture: true,
     });
 
     return NextResponse.json({ orderId: order.id, amount: order.amount, currency: order.currency });

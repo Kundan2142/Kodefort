@@ -1,5 +1,6 @@
 "use client";
-import { useEffect, useState } from "react";
+export const dynamic = 'force-dynamic';
+import { Suspense, useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import PaymentReceiptPDF from "./components/PaymentReceiptPDF";
@@ -47,7 +48,7 @@ interface Enrollment {
   } | null;
 }
 
-export default function DashboardPage() {
+function DashboardContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const [enrollments, setEnrollments] = useState<Enrollment[]>([]);
@@ -604,5 +605,20 @@ export default function DashboardPage() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function DashboardPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <Loader2 className="w-12 h-12 text-blue-600 animate-spin" />
+          <p className="text-xl text-slate-700 font-medium">Loading dashboard...</p>
+        </div>
+      </div>
+    }>
+      <DashboardContent />
+    </Suspense>
   );
 }

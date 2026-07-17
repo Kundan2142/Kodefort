@@ -1,15 +1,16 @@
 "use client";
-import { useState, useEffect } from "react";
+export const dynamic = 'force-dynamic';
+import { Suspense, useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { User, GraduationCap, Mail, Phone, Calendar, BookOpen, ArrowRight } from "lucide-react";
+import { User, GraduationCap, Mail, Phone, Calendar, BookOpen, ArrowRight, Loader2 } from "lucide-react";
 
 interface Internship {
   id: number;
   name: string;
 }
 
-export default function RegisterPage() {
+function RegisterContent() {
   const searchParams = useSearchParams();
   const internshipId = searchParams.get("internshipId");
   const router = useRouter();
@@ -246,5 +247,20 @@ export default function RegisterPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function RegisterPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <Loader2 className="w-12 h-12 text-blue-600 animate-spin" />
+          <p className="text-xl text-slate-700 font-medium">Loading...</p>
+        </div>
+      </div>
+    }>
+      <RegisterContent />
+    </Suspense>
   );
 }
