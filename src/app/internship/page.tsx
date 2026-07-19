@@ -30,12 +30,21 @@ const internshipImages: Record<string, string> = {
 
 export default function InternshipPage() {
   const [internships, setInternships] = useState<Internship[]>([]);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchInternships = async () => {
-      const res = await fetch("/api/internship");
-      const data = await res.json();
-      setInternships(data);
+      try {
+        const res = await fetch("/api/internship");
+        const data = await res.json();
+        if (res.ok && Array.isArray(data)) {
+          setInternships(data);
+        } else {
+          setError(data.error || "Failed to load internships");
+        }
+      } catch (err) {
+        setError("Failed to load internships");
+      }
     };
     fetchInternships();
     // Seed data on first load
@@ -45,6 +54,13 @@ export default function InternshipPage() {
   return (
     <div className="relative min-h-screen bg-[#F8F5F0] overflow-hidden">
       <div className="relative container mx-auto max-w-7xl px-4 py-16">
+        {/* Error State */}
+        {error && (
+          <div className="text-center py-20">
+            <h2 className="text-2xl font-bold text-slate-900 mb-4">Something went wrong</h2>
+            <p className="text-slate-600">{error}</p>
+          </div>
+        )}
         {/* Hero Section */}
         <motion.div
           className="text-center mb-12"
