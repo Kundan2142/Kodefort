@@ -3,10 +3,11 @@ import {
   Document,
   Page,
   Text,
+  Image,
   View,
   StyleSheet,
 } from '@react-pdf/renderer';
-
+import logo from '../../../logo.png';
 const styles = StyleSheet.create({
   page: {
     padding: 45,
@@ -23,6 +24,12 @@ const styles = StyleSheet.create({
     borderBottom: '3px solid #1e40af',
   },
   companyInfo: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 15,
+  },
+  companyText: {
     flex: 1,
   },
   companyName: {
@@ -61,7 +68,7 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
     backgroundColor: '#f0fdf4',
     paddingVertical: 14,
-    borderRadius: 6,
+    borderRadius: 8,
     borderWidth: 1,
     borderColor: '#bbf7d0',
   },
@@ -79,12 +86,12 @@ const styles = StyleSheet.create({
   detailsCard: {
     backgroundColor: '#f8fafc',
     border: '1px solid #e2e8f0',
-    borderRadius: 8,
-    padding: 20,
+    borderRadius: 10,
+    padding: 22,
   },
   row: {
     flexDirection: 'row',
-    marginBottom: 10,
+    marginBottom: 12,
   },
   label: {
     width: 140,
@@ -97,10 +104,10 @@ const styles = StyleSheet.create({
   },
   amountBadge: {
     backgroundColor: '#10b981',
-    borderRadius: 8,
-    padding: 15,
+    borderRadius: 10,
+    padding: 18,
     alignItems: 'center',
-    marginTop: 15,
+    marginTop: 18,
   },
   amountLabel: {
     fontSize: 10,
@@ -110,15 +117,15 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   amountValue: {
-    fontSize: 24,
+    fontSize: 26,
     fontWeight: 'bold',
     color: '#ffffff',
   },
   statusBadge: {
     backgroundColor: '#dcfce7',
-    borderRadius: 6,
-    paddingHorizontal: 12,
-    paddingVertical: 4,
+    borderRadius: 8,
+    paddingHorizontal: 14,
+    paddingVertical: 6,
     alignSelf: 'flex-start',
   },
   statusText: {
@@ -137,6 +144,15 @@ const styles = StyleSheet.create({
     color: '#94a3b8',
     marginBottom: 3,
   },
+  logoContainer: {
+    alignItems: 'center',
+  },
+
+  logo: {
+    width: 75,
+    height: 75,
+    objectFit: 'contain',
+  },
 });
 
 interface PaymentReceiptPDFProps {
@@ -150,6 +166,7 @@ interface PaymentReceiptPDFProps {
   internshipName: string;
   amountPaid: string;
 }
+
 
 const PaymentReceiptPDF: React.FC<PaymentReceiptPDFProps> = ({
   receiptId,
@@ -167,8 +184,17 @@ const PaymentReceiptPDF: React.FC<PaymentReceiptPDFProps> = ({
       {/* Header */}
       <View style={styles.header}>
         <View style={styles.companyInfo}>
-          <Text style={styles.companyName}>KODEFORT</Text>
-          <Text style={styles.companyTagline}>Empowering the Next Generation of Tech Professionals</Text>
+          <View style={styles.logoContainer}>
+            <Image src={logo.src} style={styles.logo} />
+          </View>
+
+          <View style={styles.companyText}>
+            <Text style={styles.companyName}>KODEFORT</Text>
+
+            <Text style={styles.companyTagline}>
+              Empowering the Next Generation of Tech Professionals
+            </Text>
+          </View>
         </View>
         <View style={styles.receiptInfo}>
           <Text style={styles.receiptLabel}>Receipt No</Text>

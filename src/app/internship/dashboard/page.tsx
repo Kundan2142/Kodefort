@@ -1,7 +1,8 @@
 "use client";
 export const dynamic = 'force-dynamic';
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect, useState, ReactNode } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
+import Image from "next/image";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import PaymentReceiptPDF from "./components/PaymentReceiptPDF";
 import OfferLetterPDF from "./components/OfferLetterPDF";
@@ -13,8 +14,24 @@ import {
   BookOpen,
   Loader2,
   Check,
-  Download
+  Download,
+  Shield,
+  Zap,
+  Award
 } from "lucide-react";
+
+// Sample images for each internship (same as internship page)
+const internshipImages: Record<string, string> = {
+  "Web Development": "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=800&q=80",
+  "Cyber Security": "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=800&q=80",
+  "AI Basics": "https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=800&q=80",
+  "Digital Marketing": "https://images.unsplash.com/photo-1432888498266-38ffec3eaf0a?auto=format&fit=crop&w=800&q=80",
+  "Python Programming": "https://images.unsplash.com/photo-1526379095098-d400fd0bf935?auto=format&fit=crop&w=800&q=80",
+  "Cloud Computing": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=800&q=80",
+  "DevOps": "https://images.unsplash.com/photo-1618401471353-b98afee0b2eb?auto=format&fit=crop&w=800&q=80",
+  "Software Development": "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&w=800&q=80",
+  "Database Management": "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80",
+};
 
 interface Task {
   id: number;
@@ -25,6 +42,7 @@ interface Task {
 }
 
 interface Internship {
+  difficulty: ReactNode;
   id: number;
   name: string;
   description: string;
@@ -309,9 +327,9 @@ function DashboardContent() {
   }, [enrollmentIdFromQuery, router]);
 
   if (loading) return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center">
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-orange-100 flex items-center justify-center">
       <div className="flex flex-col items-center gap-4">
-        <Loader2 className="w-12 h-12 text-blue-600 animate-spin" />
+        <Loader2 className="w-12 h-12 text-orange-600 animate-spin" />
         <p className="text-xl text-slate-700 font-medium">Loading your dashboard...</p>
       </div>
     </div>
@@ -322,148 +340,333 @@ function DashboardContent() {
     const date = getCurrentDate();
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 py-12 px-4 flex items-center justify-center">
-        <div className="w-full max-w-3xl bg-white rounded-3xl shadow-2xl shadow-slate-200/60 border border-slate-100 p-10 text-center">
-          <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-8">
-            <CheckCircle2 className="w-10 h-10 text-green-600" />
-          </div>
-          <h1 className="text-4xl font-extrabold text-slate-900 mb-4">Payment Successful!</h1>
-          <p className="text-xl text-slate-600 mb-3">Congratulations on enrolling in the internship!</p>
-          <p className="text-2xl font-bold text-blue-600 mb-8">{selectedEnrollment.internship.name}</p>
-          
-          <p className="text-slate-600 mb-10 text-lg">Download your payment receipt and offer letter below:</p>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
-            <PDFDownloadLink
-                              document={
-                                <PaymentReceiptPDF
-                                  receiptId={`KF-${selectedEnrollment.id}-${selectedEnrollment.payment?.id || '0'}-${Date.now()}`}
-                                  date={date}
-                                  studentName={student.name || "N/A"}
-                                  collegeName={student.collegeName || "N/A"}
-                                  registrationNo={student.registrationNo || "N/A"}
-                                  email={student.email || "N/A"}
-                                  mobileNo={student.mobileNo || "N/A"}
-                                  internshipName={selectedEnrollment.internship.name}
-                                  amountPaid="₹500.00"
-                                />
-                              }
-              fileName={`Kodefort_Payment_Receipt_${student.registrationNo || "student"}.pdf`}
-              className="flex items-center justify-center gap-3 bg-gradient-to-r from-green-600 to-emerald-600 text-white py-4 px-6 rounded-xl font-bold text-lg hover:from-green-700 hover:to-emerald-700 transition-all shadow-lg shadow-green-200 hover:shadow-xl"
-            >
-              {({ loading }) => (
-                loading ? (
-                  <>
-                    <Loader2 className="w-6 h-6 animate-spin" />
-                    Loading PDF...
-                  </>
-                ) : (
-                  <>
-                    <Download className="w-6 h-6" />
-                    Download Payment Receipt
-                  </>
-                )
-              )}
-            </PDFDownloadLink>
-            <PDFDownloadLink
-              document={
-                <OfferLetterPDF
-                  date={date}
-                  studentName={student.name || "N/A"}
-                  collegeName={student.collegeName || "N/A"}
-                  registrationNo={student.registrationNo || "N/A"}
-                  email={student.email || "N/A"}
-                  mobileNo={student.mobileNo || "N/A"}
-                  internshipName={selectedEnrollment.internship.name}
-                />
-              }
-              fileName={`Kodefort_Offer_Letter_${student.registrationNo || "student"}.pdf`}
-              className="flex items-center justify-center gap-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-4 px-6 rounded-xl font-bold text-lg hover:from-blue-700 hover:to-indigo-700 transition-all shadow-lg shadow-blue-200 hover:shadow-xl"
-            >
-              {({ loading }) => (
-                loading ? (
-                  <>
-                    <Loader2 className="w-6 h-6 animate-spin" />
-                    Loading PDF...
-                  </>
-                ) : (
-                  <>
-                    <FileText className="w-6 h-6" />
-                    Download Offer Letter
-                  </>
-                )
-              )}
-            </PDFDownloadLink>
+        <div className="w-full max-w-5xl bg-white rounded-[24px] shadow-[0_10px_40px_rgba(2,6,23,.06)] border border-[#E5E7EB] overflow-hidden">
+          {/* Header with blobs */}
+          <div className="relative overflow-hidden px-8 py-6 flex items-center gap-4 bg-gradient-to-r from-blue-600 via-indigo-600 to-orange-500">
+            <div className="absolute top-0 left-0 w-64 h-64 bg-blue-300/40 rounded-full blur-3xl pointer-events-none"></div>
+            <div className="absolute bottom-0 right-0 w-64 h-64 bg-orange-300/40 rounded-full blur-3xl pointer-events-none"></div>
+            <Image 
+              src="/logo.png" 
+              alt="Kodefort Logo" 
+              width={36} 
+              height={36} 
+              className="rounded-lg relative z-10"
+            />
+            <div className="relative z-10">
+              <h2 className="text-[36px] font-bold text-white tracking-tight" style={{ fontFamily: 'Creato Display, Outfit, sans-serif' }}>Payment Successful!</h2>
+              <p className="text-blue-100 text-sm mt-1">Congratulations on enrolling in the internship</p>
+            </div>
           </div>
           
-          <button
-            onClick={() => {
-              setShowDownloadScreen(false);
-            }}
-            className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 font-semibold text-lg hover:underline"
-          >
-            Go to Dashboard
-            <ArrowRight className="w-5 h-5" />
-          </button>
+          <div className="p-10 md:p-14 text-center relative">
+            {/* Decorative blobs */}
+            <div className="absolute top-10 left-1/2 -translate-x-1/2 w-32 h-32 bg-green-100/50 rounded-full blur-3xl pointer-events-none"></div>
+            <div className="absolute top-20 right-10 w-20 h-20 bg-blue-100/40 rounded-full blur-2xl pointer-events-none"></div>
+            <div className="absolute top-20 left-10 w-20 h-20 bg-emerald-100/40 rounded-full blur-2xl pointer-events-none"></div>
+            
+            <div className="relative z-10">
+              <div className="w-24 h-24 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-10 ring-8 ring-green-100">
+                <CheckCircle2 className="w-12 h-12 text-green-600" />
+              </div>
+              
+              <h1 className="text-[40px] font-extrabold text-[#111827] mb-4 tracking-tight" style={{ fontFamily: 'Creato Display, Outfit, sans-serif' }}>Payment Successful!</h1>
+              <p className="text-xl text-[#6B7280] mb-3">Congratulations on enrolling in the internship!</p>
+              <p className="text-[28px] font-bold text-[#2563EB] mb-10 tracking-tight" style={{ fontFamily: 'Creato Display, Outfit, sans-serif' }}>{selectedEnrollment.internship.name}</p>
+              
+              <div className="w-20 h-0.5 bg-gradient-to-r from-transparent via-[#E5E7EB] to-transparent mx-auto mb-10"></div>
+              
+              <p className="text-[#6B7280] mb-12 text-lg font-medium">Download your payment receipt and offer letter below:</p>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12 max-w-3xl mx-auto">
+                <PDFDownloadLink
+                            document={
+                              <PaymentReceiptPDF
+                                receiptId={`KF-${selectedEnrollment.id}-${selectedEnrollment.payment?.id || '0'}-${Date.now()}`}
+                                date={date}
+                                studentName={student.name || "N/A"}
+                                collegeName={student.collegeName || "N/A"}
+                                registrationNo={student.registrationNo || "N/A"}
+                                email={student.email || "N/A"}
+                                mobileNo={student.mobileNo || "N/A"}
+                                internshipName={selectedEnrollment.internship.name}
+                                amountPaid="₹500.00"
+                              />
+                            }
+                            fileName={`Kodefort_Payment_Receipt_${student.registrationNo || "student"}.pdf`}
+                            className="group relative flex items-center justify-center gap-2 bg-gradient-to-b from-orange-500 via-orange-600 to-orange-700 text-white py-3 px-6 rounded-full font-bold text-lg shadow-lg shadow-orange-500/30 hover:-translate-y-1 hover:shadow-xl hover:shadow-orange-500/40 transition-all duration-300 border border-orange-800/30 z-10"
+                          >
+                            {({ loading }) => (
+                              <div className="relative z-20 flex items-center justify-center gap-2">
+                                {loading ? (
+                                  <>
+                                    <Loader2 className="w-5 h-5 animate-spin" />
+                                    Loading PDF...
+                                  </>
+                                ) : (
+                                  <>
+                                    <Download className="w-5 h-5 group-hover:scale-110 transition-transform duration-300" />
+                                    Download Payment Receipt
+                                  </>
+                                )}
+                              </div>
+                            )}
+                          </PDFDownloadLink>
+                          
+                          <PDFDownloadLink
+                            document={
+                              <OfferLetterPDF
+                                date={date}
+                                studentName={student.name || "N/A"}
+                                collegeName={student.collegeName || "N/A"}
+                                registrationNo={student.registrationNo || "N/A"}
+                                email={student.email || "N/A"}
+                                mobileNo={student.mobileNo || "N/A"}
+                                internshipName={selectedEnrollment.internship.name}
+                              />
+                            }
+                            fileName={`Kodefort_Offer_Letter_${student.registrationNo || "student"}.pdf`}
+                            className="group relative flex items-center justify-center gap-2 bg-white text-orange-600 py-3 px-6 rounded-full font-bold text-lg shadow-lg shadow-orange-500/20 hover:-translate-y-1 hover:shadow-xl hover:shadow-orange-500/30 transition-all duration-300 border-2 border-orange-300 z-10"
+                          >
+                            {({ loading }) => (
+                              <div className="relative z-20 flex items-center justify-center gap-2">
+                                {loading ? (
+                                  <>
+                                    <Loader2 className="w-5 h-5 animate-spin" />
+                                    Loading PDF...
+                                  </>
+                                ) : (
+                                  <>
+                                    <FileText className="w-5 h-5 group-hover:scale-110 transition-transform duration-300" />
+                                    Download Offer Letter
+                                  </>
+                                )}
+                              </div>
+                            )}
+                          </PDFDownloadLink>
+              </div>
+              
+              <button
+                onClick={() => {
+                  setShowDownloadScreen(false);
+                }}
+                className="inline-flex items-center gap-3 text-[#2563EB] hover:text-[#1D4ED8] font-semibold text-lg hover:underline transition-colors duration-200"
+              >
+                Go to Dashboard
+                <ArrowRight className="w-6 h-6" />
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 py-12 px-4">
-      <div className="container mx-auto max-w-6xl">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-extrabold text-slate-900 mb-3">
-            Internship Dashboard
-          </h1>
-          <p className="text-xl text-slate-600">Track your progress and access your materials</p>
-        </div>
-        
-        {selectedEnrollment ? (
-          <div>
-            {enrollments.length > 1 && (
-              <div className="mb-8 w-full max-w-md mx-auto">
-                <label className="flex items-center gap-2 text-sm font-semibold text-slate-700 mb-3">
-                  <BookOpen className="w-4 h-4 text-blue-600" />
-                  Select Internship
-                </label>
-                <div className="relative">
-                  <select
-                    className="w-full pl-10 pr-4 py-3 border-2 border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-50 transition-all appearance-none bg-white"
-                    value={selectedEnrollment.id}
-                    onChange={(event) => setSelectedEnrollment(enrollments.find((enrollment) => enrollment.id === parseInt(event.target.value)) || null)}
-                  >
-                    {enrollments.map((enrollment) => (
-                      <option key={enrollment.id} value={enrollment.id}>{enrollment.internship.name}</option>
-                    ))}
-                  </select>
-                  <BookOpen className="w-5 h-5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-orange-100 relative overflow-hidden">
+      {/* Decorative gradient blobs */}
+      <div className="absolute top-0 left-0 w-96 h-96 bg-orange-200/30 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
+      <div className="absolute bottom-0 right-0 w-96 h-96 bg-orange-300/20 rounded-full blur-3xl translate-x-1/2 translate-y-1/2"></div>
+      <div className="absolute top-1/2 right-1/4 w-64 h-64 bg-orange-100/40 rounded-full blur-2xl"></div>
+      
+      {selectedEnrollment ? (
+        <div className="container mx-auto max-w-6xl px-4 py-8 relative z-10">
+          {/* Header Section */}
+          <div className="flex items-start justify-between mb-8">
+            <div>
+              <h1 className="text-4xl font-extrabold text-slate-900 mb-2" style={{ fontFamily: 'Creato Display, Outfit, sans-serif' }}>
+                Hello, {selectedEnrollment.student?.name || "Student"}
+              </h1>
+              <p className="text-lg text-slate-500">
+                {selectedEnrollment.internship.description}
+                {selectedEnrollment.student?.registrationNo && (
+                  <span className="ml-2 text-slate-400">• Reg. No: {selectedEnrollment.student.registrationNo}</span>
+                )}
+              </p>
+              {enrollments.length > 1 && (
+                <div className="mt-4 w-full max-w-md">
+                  <div className="relative">
+                    <select
+                      className="w-full pl-4 pr-10 py-3 border-2 border-orange-200 rounded-2xl focus:outline-none focus:border-orange-500 focus:ring-4 focus:ring-orange-100 transition-all appearance-none bg-white shadow-sm"
+                      value={selectedEnrollment.id}
+                      onChange={(event) => setSelectedEnrollment(enrollments.find((enrollment) => enrollment.id === parseInt(event.target.value)) || null)}
+                    >
+                      {enrollments.map((enrollment) => (
+                        <option key={enrollment.id} value={enrollment.id}>{enrollment.internship.name}</option>
+                      ))}
+                    </select>
+                    <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
+                      <svg className="w-5 h-5 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Progress Indicator */}
+            <div className="flex items-center gap-4">
+              <div className="relative w-20 h-20 bg-white rounded-full shadow-lg border border-orange-100">
+                <svg className="w-full h-full transform -rotate-90">
+                  <circle cx="40" cy="40" r="36" fill="none" stroke="#f9731620" strokeWidth="6" />
+                  <circle 
+                    cx="40" cy="40" r="36" fill="none" 
+                    stroke={selectedEnrollment.payment?.status === "completed" ? "#10b981" : "#f97316"} 
+                    strokeWidth="6" 
+                    strokeDasharray="226.2" 
+                    strokeDashoffset={selectedEnrollment.payment?.status === "completed" ? "0" : "113.1"}
+                    strokeLinecap="round"
+                  />
+                </svg>
+                <div className="absolute inset-0 flex flex-col items-center justify-center">
+                  <span className="text-xl font-bold text-slate-900" style={{ fontFamily: 'Creato Display, Outfit, sans-serif' }}>
+                    {selectedEnrollment.payment?.status === "completed" ? (
+                      selectedEnrollment.internship.tasks?.length || 0
+                    ) : 0}
+                    /
+                    {selectedEnrollment.internship.tasks?.length || 0}
+                  </span>
+                  <span className="text-xs text-slate-500">Tasks</span>
                 </div>
               </div>
-            )}
-            
-            <div className="bg-white rounded-3xl shadow-2xl shadow-slate-200/60 border border-slate-100 p-8 md:p-10">
-              <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900 mb-3">
-                {selectedEnrollment.internship.name}
-              </h2>
-              <p className="text-lg text-slate-600 mb-8 leading-relaxed">
-                {selectedEnrollment.internship.description}
-              </p>
-              
-              {selectedEnrollment.payment?.status !== "completed" ? (
-                <div className="bg-gradient-to-r from-amber-50 to-yellow-50 border border-amber-200 p-8 rounded-2xl mb-8">
-                  <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-                    <div>
-                      <h3 className="text-2xl font-bold text-amber-800 mb-2 flex items-center gap-2">
-                        <CreditCard className="w-7 h-7" />
-                        Payment Required
-                      </h3>
-                      <p className="text-amber-700">Please complete the payment of <span className="font-bold text-xl">₹500</span> to access the tasks</p>
+            </div>
+          </div>
+
+          {/* Payment Section (if not completed) */}
+          {selectedEnrollment.payment?.status !== "completed" ? (
+            <div className="mb-12">
+              <div className="rounded-[24px] border border-[#E5E7EB] bg-white shadow-[0_10px_40px_rgba(2,6,23,.06)] overflow-hidden">
+                {/* Header */}
+                <div className="relative overflow-hidden px-8 py-6 flex items-center gap-4 rounded-t-[24px] bg-gradient-to-r from-blue-600 via-indigo-600 to-orange-500">
+                  <div className="absolute top-0 left-0 w-64 h-64 bg-blue-300/40 rounded-full blur-3xl pointer-events-none"></div>
+                  <div className="absolute bottom-0 right-0 w-64 h-64 bg-orange-300/40 rounded-full blur-3xl pointer-events-none"></div>
+                  <Image 
+                    src="/logo.png" 
+                    alt="Kodefort Logo" 
+                    width={36} 
+                    height={36} 
+                    className="rounded-lg relative z-10"
+                  />
+                  <div className="relative z-10">
+                    <h2 className="text-[36px] font-bold text-white tracking-tight" style={{ fontFamily: 'Creato Display, Outfit, sans-serif' }}>Complete Your Enrollment</h2>
+                    <p className="text-blue-100 text-sm mt-1">Secure payment powered by Razorpay</p>
+                  </div>
+                </div>
+                
+                <div className="grid grid-cols-1 lg:grid-cols-2">
+                  {/* Left Column: Course Summary */}
+                  <div className="p-10 border-r border-[#E5E7EB]">
+                    <div className="flex items-center gap-2 mb-8 text-[#6B7280] font-semibold text-sm">
+                      <BookOpen className="w-4 h-4 stroke-[1.75]" />
+                      <span>Course Summary</span>
                     </div>
+                    
+                    <div className="relative mb-8 rounded-[20px] overflow-hidden">
+                      <img 
+                        src={internshipImages[selectedEnrollment.internship.name] || "https://images.unsplash.com/photo-1516116216624-53e697fedbea?auto=format&fit=crop&w=800&q=80"} 
+                        alt={selectedEnrollment.internship.name} 
+                        className="w-full h-56 object-cover"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
+                      <div className="absolute bottom-5 left-5">
+                        <span className="inline-block px-3 py-1.5 bg-white text-xs font-semibold text-[#111827] rounded-full">
+                          {selectedEnrollment.internship.difficulty}
+                        </span>
+                      </div>
+                    </div>
+                    
+                    <h3 className="text-[20px] font-semibold text-[#111827] mb-6 tracking-tight" style={{ fontFamily: 'Creato Display, Outfit, sans-serif' }}>
+                      {selectedEnrollment.internship.name}
+                    </h3>
+                    
+                    <div className="bg-[#F8FAFC] border border-[#E5E7EB] p-[18px] rounded-[16px] mb-8">
+                      <p className="text-[15px] text-[#4B5563] leading-relaxed">
+                        {selectedEnrollment.internship.description}
+                      </p>
+                    </div>
+                    
+                    <div className="space-y-3">
+                      <div className="h-[64px] bg-white border border-[#E5E7EB] rounded-[16px] p-4 flex items-center gap-3 shadow-[0_1px_2px_rgba(0,0,0,0.05)] hover:-translate-y-[2px] hover:border-[#2563EB] transition-all duration-200 cursor-default">
+                        <div className="w-8 h-8 bg-[#F3F4F6] rounded-full flex items-center justify-center text-[#6B7280]">
+                          <Award className="w-4 h-4 stroke-[1.75]" />
+                        </div>
+                        <p className="text-[15px] font-medium text-[#111827]">Industry-Recognized Certificate</p>
+                      </div>
+                      
+                      <div className="h-[64px] bg-white border border-[#E5E7EB] rounded-[16px] p-4 flex items-center gap-3 shadow-[0_1px_2px_rgba(0,0,0,0.05)] hover:-translate-y-[2px] hover:border-[#2563EB] transition-all duration-200 cursor-default">
+                        <div className="w-8 h-8 bg-[#F3F4F6] rounded-full flex items-center justify-center text-[#6B7280]">
+                          <Zap className="w-4 h-4 stroke-[1.75]" />
+                        </div>
+                        <p className="text-[15px] font-medium text-[#111827]">Lifetime Access to Content</p>
+                      </div>
+                      
+                      <div className="h-[64px] bg-white border border-[#E5E7EB] rounded-[16px] p-4 flex items-center gap-3 shadow-[0_1px_2px_rgba(0,0,0,0.05)] hover:-translate-y-[2px] hover:border-[#2563EB] transition-all duration-200 cursor-default">
+                        <div className="w-8 h-8 bg-[#F3F4F6] rounded-full flex items-center justify-center text-[#6B7280]">
+                          <Shield className="w-4 h-4 stroke-[1.75]" />
+                        </div>
+                        <p className="text-[15px] font-medium text-[#111827]">100% Secure Payment</p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Right Column: Payment Details */}
+                  <div className="p-10 bg-white">
+                    <div className="flex items-center gap-2 mb-8 text-[#6B7280] font-semibold text-sm">
+                      <CreditCard className="w-4 h-4 stroke-[1.75]" />
+                      <span>Payment Details</span>
+                    </div>
+                    
+                    <div className="space-y-4 mb-10">
+                      <div>
+                        <label className="text-[14px] font-semibold text-[#4B5563] mb-2 block">Name</label>
+                        <div className="h-[56px] bg-white border border-[#E5E7EB] px-5 rounded-[14px] text-[#111827] font-medium flex items-center justify-between transition-all duration-200">
+                          {selectedEnrollment.student?.name || "N/A"}
+                          <div className="w-6 h-6 bg-[#ECFDF5] rounded-full flex items-center justify-center">
+                            <CheckCircle2 className="w-4 h-4 text-[#10B981] stroke-[1.75]" />
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div>
+                        <label className="text-[14px] font-semibold text-[#4B5563] mb-2 block">Email</label>
+                        <div className="h-[56px] bg-white border border-[#E5E7EB] px-5 rounded-[14px] text-[#111827] font-medium flex items-center justify-between transition-all duration-200">
+                          {selectedEnrollment.student?.email || "N/A"}
+                          <div className="w-6 h-6 bg-[#ECFDF5] rounded-full flex items-center justify-center">
+                            <CheckCircle2 className="w-4 h-4 text-[#10B981] stroke-[1.75]" />
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div>
+                        <label className="text-[14px] font-semibold text-[#4B5563] mb-2 block">Registration No</label>
+                        <div className="h-[56px] bg-white border border-[#E5E7EB] px-5 rounded-[14px] text-[#111827] font-medium flex items-center justify-between transition-all duration-200">
+                          {selectedEnrollment.student?.registrationNo || "N/A"}
+                          <div className="w-6 h-6 bg-[#ECFDF5] rounded-full flex items-center justify-center">
+                            <CheckCircle2 className="w-4 h-4 text-[#10B981] stroke-[1.75]" />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="bg-white rounded-[20px] border border-[#E5E7EB] p-8 mb-10">
+                      <div className="flex justify-between items-center mb-6">
+                        <span className="text-[15px] text-[#6B7280] font-medium">Course Fee</span>
+                        <span className="text-[20px] font-semibold text-[#111827]">₹500</span>
+                      </div>
+                      
+                      <div className="border-t border-[#E5E7EB] pt-6 flex justify-between items-start">
+                        <span className="text-[20px] font-semibold text-[#111827]">Total</span>
+                        <div className="text-right">
+                          <span className="text-[44px] font-extrabold text-[#111827] tracking-tight" style={{ fontFamily: 'Creato Display, Outfit, sans-serif' }}>₹500</span>
+                          <p className="text-xs text-[#9CA3AF] mt-1">Inclusive of all taxes</p>
+                        </div>
+                      </div>
+                    </div>
+                    
                     <button
                       onClick={handlePayment}
                       disabled={isPaying}
-                      className="flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-10 py-4 rounded-xl font-bold text-lg hover:from-blue-700 hover:to-indigo-700 transition-all shadow-lg shadow-blue-200 hover:shadow-xl disabled:opacity-70 disabled:cursor-not-allowed"
+                      className="w-full h-[58px] flex items-center justify-center gap-3 bg-gradient-to-r from-[#2563EB] to-[#4338CA] text-white rounded-[16px] font-semibold text-lg shadow-[0_4px_12px_rgba(37,99,235,0.2)] hover:-translate-y-[2px] hover:shadow-[0_8px_20px_rgba(37,99,235,0.25)] hover:brightness-[1.03] transition-all duration-200 disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-[0_4px_12px_rgba(37,99,235,0.2)] disabled:hover:brightness-100"
                     >
                       {isPaying ? (
                         <>
@@ -472,138 +675,247 @@ function DashboardContent() {
                         </>
                       ) : (
                         <>
-                          <CreditCard className="w-6 h-6" />
-                          Pay Now with Razorpay
+                          <CreditCard className="w-6 h-6 stroke-[1.75]" />
+                          Pay ₹500 Securely
                         </>
                       )}
                     </button>
+                    
+                    <div className="mt-10 flex items-center justify-center gap-12 text-[#9CA3AF] text-[14px]">
+                      <div className="flex items-center gap-2">
+                        <Shield className="w-4 h-4 stroke-[1.75]" />
+                        <span>100% Secure</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Zap className="w-4 h-4 stroke-[1.75]" />
+                        <span>Instant Access</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              ) : (
-                <div>
-                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 pb-6 border-b border-slate-100">
-                    <div className="flex items-center gap-3">
-                      <h3 className="text-2xl md:text-3xl font-bold text-slate-900">Tasks</h3>
-                      <span className="inline-flex items-center gap-1 bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-semibold">
-                        <Check className="w-4 h-4" />
-                        Enrolled
-                      </span>
+              </div>
+            </div>
+          ) : (
+            <>
+              {/* Stats Cards */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
+                <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 bg-orange-50 rounded-xl flex items-center justify-center text-orange-600">
+                      <BookOpen className="w-6 h-6" />
                     </div>
-                    
-                    <div className="flex flex-wrap gap-3">
-                      {selectedEnrollment && (() => {
-                        const student = safeParseJSON(localStorage.getItem("student")) || {};
-                        const date = getCurrentDate();
-                        return (
-                          <>
-                            <PDFDownloadLink
-                              document={
-                                <PaymentReceiptPDF
-                                  receiptId={`KF-${selectedEnrollment.id}-${selectedEnrollment.payment?.id || '0'}-${Date.now()}`}
-                                  date={date}
-                                  studentName={student.name || "N/A"}
-                                  collegeName={student.collegeName || "N/A"}
-                                  registrationNo={student.registrationNo || "N/A"}
-                                  email={student.email || "N/A"}
-                                  mobileNo={student.mobileNo || "N/A"}
-                                  internshipName={selectedEnrollment.internship.name}
-                                  amountPaid="₹500.00"
-                                />
-                              }
-                              fileName={`Kodefort_Payment_Receipt_${student.registrationNo || "student"}.pdf`}
-                              className="flex items-center gap-2 bg-gradient-to-r from-green-600 to-emerald-600 text-white px-5 py-3 rounded-xl font-semibold hover:from-green-700 hover:to-emerald-700 transition-all shadow-md"
-                            >
-                              {({ loading }) => (
-                                loading ? (
-                                  <>
-                                    <Loader2 className="w-4 h-4 animate-spin" />
-                                    Loading...
-                                  </>
-                                ) : (
-                                  <>
-                                    <Download className="w-4 h-4" />
-                                    Download Payment Receipt
-                                  </>
-                                )
-                              )}
-                            </PDFDownloadLink>
-                            <PDFDownloadLink
-                              document={
-                                <OfferLetterPDF
-                                  date={date}
-                                  studentName={student.name || "N/A"}
-                                  collegeName={student.collegeName || "N/A"}
-                                  registrationNo={student.registrationNo || "N/A"}
-                                  email={student.email || "N/A"}
-                                  mobileNo={student.mobileNo || "N/A"}
-                                  internshipName={selectedEnrollment.internship.name}
-                                />
-                              }
-                              fileName={`Kodefort_Offer_Letter_${student.registrationNo || "student"}.pdf`}
-                              className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-5 py-3 rounded-xl font-semibold hover:from-blue-700 hover:to-indigo-700 transition-all shadow-md"
-                            >
-                              {({ loading }) => (
-                                loading ? (
-                                  <>
-                                    <Loader2 className="w-4 h-4 animate-spin" />
-                                    Loading...
-                                  </>
-                                ) : (
-                                  <>
-                                    <FileText className="w-4 h-4" />
-                                    Download Offer Letter
-                                  </>
-                                )
-                              )}
-                            </PDFDownloadLink>
-                          </>
-                        );
-                      })()}
+                    <div>
+                      <p className="text-3xl font-extrabold text-slate-900" style={{ fontFamily: 'Creato Display, Outfit, sans-serif' }}>
+                        {selectedEnrollment.internship.tasks?.length || 0}
+                      </p>
+                      <p className="text-sm text-slate-500">Total Tasks</p>
                     </div>
+                  </div>
+                </div>
+                <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 bg-orange-50 rounded-xl flex items-center justify-center text-orange-600">
+                      <CheckCircle2 className="w-6 h-6" />
+                    </div>
+                    <div>
+                      <p className="text-3xl font-extrabold text-slate-900" style={{ fontFamily: 'Creato Display, Outfit, sans-serif' }}>
+                        0
+                      </p>
+                      <p className="text-sm text-slate-500">Completed</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 bg-orange-50 rounded-xl flex items-center justify-center text-orange-600">
+                      <FileText className="w-6 h-6" />
+                    </div>
+                    <div>
+                      <p className="text-3xl font-extrabold text-slate-900" style={{ fontFamily: 'Creato Display, Outfit, sans-serif' }}>
+                        2
+                      </p>
+                      <p className="text-sm text-slate-500">Documents</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Tasks Section */}
+              <div className="mb-4">
+                <h2 className="text-2xl font-bold text-slate-900 mb-4" style={{ fontFamily: 'Creato Display, Outfit, sans-serif' }}>
+                  Tasks
+                </h2>
+                
+                {/* Search and Actions Bar */}
+                <div className="flex flex-col md:flex-row gap-4 items-center justify-between mb-6">
+                  <div className="relative w-full md:w-96">
+                    <svg className="w-5 h-5 text-orange-400 absolute left-4 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                    <input 
+                      type="text" 
+                      placeholder="Search here..."
+                      className="w-full pl-12 pr-4 py-3 border-2 border-orange-200 rounded-2xl focus:outline-none focus:border-orange-500 focus:ring-4 focus:ring-orange-100 transition-all bg-white shadow-sm"
+                    />
                   </div>
                   
-                  <div className="space-y-6">
-                    {selectedEnrollment.internship.tasks.map((task) => (
-                      <div key={task.id} className="bg-slate-50 p-6 md:p-8 rounded-2xl border border-slate-100 hover:shadow-lg hover:shadow-slate-200/50 transition-all">
-                        <h4 className="text-xl md:text-2xl font-bold text-slate-900 mb-3 flex items-center gap-3">
-                          <span className="flex items-center justify-center w-10 h-10 bg-blue-100 text-blue-700 rounded-full font-bold text-lg">
-                            {task.order}
-                          </span>
-                          {task.title}
-                        </h4>
-                        <p className="text-slate-600 mb-6 leading-relaxed">{task.description}</p>
-                        
-                        {task.youtubeUrl && (
-                          <div className="aspect-video rounded-xl overflow-hidden shadow-md">
-                            <iframe
-                              width="100%"
-                              height="100%"
-                              src={task.youtubeUrl.replace("watch?v=", "embed/")}
-                              title={task.title}
-                              frameBorder="0"
-                              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                              allowFullScreen
-                              className="w-full h-full"
-                            ></iframe>
-                          </div>
-                        )}
-                      </div>
-                    ))}
+                  <div className="flex items-center gap-3">
+                    {/* Download Buttons */}
+                    {selectedEnrollment && (() => {
+                      const student = safeParseJSON(localStorage.getItem("student")) || {};
+                      const date = getCurrentDate();
+                      return (
+                        <>
+                          <PDFDownloadLink
+                            document={
+                              <PaymentReceiptPDF
+                                receiptId={`KF-${selectedEnrollment.id}-${selectedEnrollment.payment?.id || '0'}-${Date.now()}`}
+                                date={date}
+                                studentName={student.name || "N/A"}
+                                collegeName={student.collegeName || "N/A"}
+                                registrationNo={student.registrationNo || "N/A"}
+                                email={student.email || "N/A"}
+                                mobileNo={student.mobileNo || "N/A"}
+                                internshipName={selectedEnrollment.internship.name}
+                                amountPaid="₹500.00"
+                              />
+                            }
+                            fileName={`Kodefort_Payment_Receipt_${student.registrationNo || "student"}.pdf`}
+                            className="group relative flex items-center gap-2 bg-gradient-to-b from-orange-500 via-orange-600 to-orange-700 text-white px-5 py-2.5 rounded-full font-bold text-base shadow-lg shadow-orange-500/30 hover:-translate-y-1 hover:shadow-xl hover:shadow-orange-500/40 transition-all duration-300 border border-orange-800/30 z-10"
+                          >
+                            {({ loading }) => (
+                              <div className="relative z-20 flex items-center gap-2">
+                                {loading ? (
+                                  <>
+                                    <Loader2 className="w-4 h-4 animate-spin" />
+                                    Loading...
+                                  </>
+                                ) : (
+                                  <>
+                                    <Download className="w-4 h-4 group-hover:scale-110 transition-transform duration-300" />
+                                    Receipt
+                                  </>
+                                )}
+                              </div>
+                            )}
+                          </PDFDownloadLink>
+                          <PDFDownloadLink
+                            document={
+                              <OfferLetterPDF
+                                date={date}
+                                studentName={student.name || "N/A"}
+                                collegeName={student.collegeName || "N/A"}
+                                registrationNo={student.registrationNo || "N/A"}
+                                email={student.email || "N/A"}
+                                mobileNo={student.mobileNo || "N/A"}
+                                internshipName={selectedEnrollment.internship.name}
+                              />
+                            }
+                            fileName={`Kodefort_Offer_Letter_${student.registrationNo || "student"}.pdf`}
+                            className="group relative flex items-center gap-2 bg-white text-orange-600 px-5 py-2.5 rounded-full font-bold text-base shadow-lg shadow-orange-500/20 hover:-translate-y-1 hover:shadow-xl hover:shadow-orange-500/30 transition-all duration-300 border-2 border-orange-300 z-10"
+                          >
+                            {({ loading }) => (
+                              <div className="relative z-20 flex items-center gap-2">
+                                {loading ? (
+                                  <>
+                                    <Loader2 className="w-4 h-4 animate-spin" />
+                                    Loading...
+                                  </>
+                                ) : (
+                                  <>
+                                    <FileText className="w-4 h-4 group-hover:scale-110 transition-transform duration-300" />
+                                    Offer Letter
+                                  </>
+                                )}
+                              </div>
+                            )}
+                          </PDFDownloadLink>
+                        </>
+                      );
+                    })()}
                   </div>
                 </div>
-              )}
-            </div>
-          </div>
-        ) : (
-          <div className="bg-white rounded-3xl shadow-xl shadow-slate-200/50 border border-slate-100 p-12 text-center max-w-2xl mx-auto">
+
+                {/* Tasks Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {selectedEnrollment.internship.tasks.map((task) => (
+                    <div 
+                      key={task.id} 
+                      className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow"
+                    >
+                      {/* Thumbnail */}
+                      <div className="relative aspect-video bg-slate-100">
+                        {task.youtubeUrl ? (
+                          <iframe
+                            width="100%"
+                            height="100%"
+                            src={task.youtubeUrl.replace("watch?v=", "embed/")}
+                            title={task.title}
+                            frameBorder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowFullScreen
+                            className="w-full h-full"
+                          ></iframe>
+                        ) : (
+                          <img 
+                            src={internshipImages[selectedEnrollment.internship.name] || "https://images.unsplash.com/photo-1516116216624-53e697fedbea?auto=format&fit=crop&w=800&q=80"} 
+                            alt={task.title} 
+                            className="w-full h-full object-cover"
+                          />
+                        )}
+                        {/* Status Badge */}
+                        <div className="absolute top-4 left-4">
+                          <span className="inline-flex items-center gap-1 bg-teal-500 text-white px-3 py-1 rounded-full text-sm font-semibold shadow-sm">
+                            <Check className="w-3 h-3" />
+                            Pending
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Task Content */}
+                      <div className="p-5">
+                        <h3 className="text-lg font-bold text-slate-900 mb-2" style={{ fontFamily: 'Creato Display, Outfit, sans-serif' }}>
+                          {task.order}. {task.title}
+                        </h3>
+                        <p className="text-sm text-slate-500 line-clamp-2 mb-4">
+                          {task.description}
+                        </p>
+                        
+                        {/* Footer */}
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <div className="flex -space-x-2">
+                              {[1, 2, 3].map((i) => (
+                                <div key={i} className="w-6 h-6 rounded-full bg-slate-300 border-2 border-white" />
+                              ))}
+                            </div>
+                            <span className="text-xs text-slate-400">Just now</span>
+                          </div>
+                          <button className="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center text-white hover:bg-orange-600 transition-colors">
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                            </svg>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </>
+          )}
+        </div>
+      ) : (
+        <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-orange-100 flex items-center justify-center px-4">
+          <div className="bg-white rounded-3xl shadow-xl shadow-orange-200/50 border border-orange-100 p-12 text-center max-w-2xl">
             <p className="text-xl md:text-2xl text-slate-700 mb-6">No enrollments found</p>
-            <a href="/internship" className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 font-bold text-lg hover:underline">
+            <a href="/internship" className="inline-flex items-center gap-2 text-orange-600 hover:text-orange-700 font-bold text-lg hover:underline">
               Browse Internships
               <ArrowRight className="w-5 h-5" />
             </a>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -611,9 +923,9 @@ function DashboardContent() {
 export default function DashboardPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-orange-100 flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
-          <Loader2 className="w-12 h-12 text-blue-600 animate-spin" />
+          <Loader2 className="w-12 h-12 text-orange-600 animate-spin" />
           <p className="text-xl text-slate-700 font-medium">Loading dashboard...</p>
         </div>
       </div>

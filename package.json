@@ -15,6 +15,7 @@
     "@tailwindcss/forms": "^0.5.10",
     "autoprefixer": "^10.4.21",
     "bcryptjs": "^3.0.3",
+    "framer-motion": "^12.42.2",
     "isomorphic-dompurify": "^2.28.0",
     "jsonwebtoken": "^9.0.3",
     "lucide-react": "^0.544.0",

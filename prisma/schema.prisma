@@ -6,7 +6,6 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../src/generated/prisma"
 }
 
 datasource db {
@@ -27,9 +26,10 @@ model Student {
   name         String
   collegeName  String
   registrationNo String    @unique
-  email        String       @unique
+  email        String
   mobileNo     String
   dateOfBirth  DateTime
+  session      String
   internshipType String    @default("Hybrid (Online)")
   enrollments  Enrollment[]
   createdAt    DateTime     @default(now())
@@ -39,7 +39,10 @@ model Internship {
   id          Int          @id @default(autoincrement())
   name        String       @unique
   description String
-  price       Int          @default(500) // 500 INR
+  price       Int          @default(499) // 499 INR
+  difficulty  String       @default("Beginner")
+  icon        String       @default("💻")
+  rating      Float        @default(4.9)
   tasks       Task[]
   enrollments Enrollment[]
   createdAt   DateTime     @default(now())
@@ -47,12 +50,14 @@ model Internship {
 
 model Enrollment {
   id           Int       @id @default(autoincrement())
-  studentId    Int       @unique
+  studentId    Int
   internshipId Int
   student      Student   @relation(fields: [studentId], references: [id], onDelete: Cascade)
   internship   Internship @relation(fields: [internshipId], references: [id], onDelete: Cascade)
   payment      Payment?
   createdAt    DateTime  @default(now())
+
+  @@unique([studentId, internshipId])
 }
 
 model Payment {

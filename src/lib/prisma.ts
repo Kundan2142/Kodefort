@@ -47,7 +47,7 @@
 
 
 
-import { PrismaClient } from   "@/generated/prisma";
+import { PrismaClient } from "@prisma/client";
 
 // Extend global type declarations
 declare global {

@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { BookOpen, Calendar, ArrowRight, LogIn } from "lucide-react";
+import { ArrowRight, Loader2 } from "lucide-react";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -33,83 +33,83 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 py-12 px-4 flex items-center justify-center">
-      <div className="w-full max-w-lg">
+    <div className="relative min-h-screen bg-white overflow-hidden">
+      {/* Background Gradient Blobs */}
+      <div className="absolute top-0 left-0 w-1/2 h-full bg-gradient-to-br from-blue-50/50 via-indigo-50/30 to-transparent" />
+      <div className="absolute top-0 right-0 w-1/3 h-full bg-gradient-to-bl from-orange-50/50 via-amber-50/30 to-transparent" />
+      
+      {/* Subtle Noise Overlay */}
+      <div className="absolute inset-0 opacity-20" style={{
+        backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.1'/%3E%3C/svg%3E")`,
+      }} />
+
+      <div className="relative container mx-auto max-w-2xl px-4 py-20">
         {/* Header */}
         <div className="text-center mb-10">
-          <h1 className="text-4xl font-extrabold text-slate-900 mb-3">
+          <h1 className="text-3xl font-bold text-slate-900 mb-2">
             Welcome Back!
           </h1>
-          <p className="text-lg text-slate-600">
+          <p className="text-slate-600">
             Login to access your internship dashboard
           </p>
         </div>
 
-        {/* Form Card */}
-        <div className="bg-white rounded-3xl shadow-2xl shadow-slate-200/60 border border-slate-100 p-8 md:p-10">
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Registration No */}
-            <div className="space-y-2">
-              <label className="flex items-center gap-2 text-sm font-semibold text-slate-700">
-                <BookOpen className="w-4 h-4 text-blue-600" />
-                Registration Number
-              </label>
-              <div className="relative">
-                <input
-                  type="text"
-                  required
-                  className="w-full pl-10 pr-4 py-3 border-2 border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-50 transition-all"
-                  placeholder="Enter your registration number"
-                  value={formData.registrationNo}
-                  onChange={(e) => setFormData({ ...formData, registrationNo: e.target.value })}
-                />
-                <BookOpen className="w-5 h-5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
-              </div>
-            </div>
+        {/* Glassmorphism Form Container */}
+        <div className="relative">
+          {/* Blurred Gradient Blobs behind form */}
+          <div className="absolute -top-20 -left-20 w-80 h-80 bg-blue-300/40 rounded-full blur-3xl" />
+          <div className="absolute -bottom-20 -right-20 w-80 h-80 bg-orange-300/40 rounded-full blur-3xl" />
+          
+          {/* Form */}
+          <form onSubmit={handleSubmit} className="relative space-y-8">
+          {/* Registration Number */}
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-slate-700">
+              Registration Number<span className="text-red-600">*</span>
+            </label>
+            <input
+              type="text"
+              required
+              className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+              placeholder="Enter your Registration Number"
+              value={formData.registrationNo}
+              onChange={(e) => setFormData({ ...formData, registrationNo: e.target.value })}
+            />
+          </div>
 
-            {/* Date of Birth */}
-            <div className="space-y-2">
-              <label className="flex items-center gap-2 text-sm font-semibold text-slate-700">
-                <Calendar className="w-4 h-4 text-blue-600" />
-                Date of Birth
-              </label>
-              <div className="relative">
-                <input
-                  type="date"
-                  required
-                  className="w-full pl-10 pr-4 py-3 border-2 border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-50 transition-all"
-                  value={formData.dateOfBirth}
-                  onChange={(e) => setFormData({ ...formData, dateOfBirth: e.target.value })}
-                />
-                <Calendar className="w-5 h-5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
-              </div>
-            </div>
+          {/* Date of Birth */}
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-slate-700">
+              Date of Birth<span className="text-red-600">*</span>
+            </label>
+            <input
+              type="date"
+              required
+              className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+              value={formData.dateOfBirth}
+              onChange={(e) => setFormData({ ...formData, dateOfBirth: e.target.value })}
+            />
+          </div>
 
-            {/* Submit Button */}
+          {/* Submit Button */}
+          <div className="flex justify-center mt-10">
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-4 rounded-xl font-bold text-lg hover:from-blue-700 hover:to-indigo-700 transition-all shadow-lg shadow-blue-200 hover:shadow-xl hover:shadow-blue-300 disabled:opacity-70 disabled:cursor-not-allowed"
+              className="px-10 py-3 bg-gradient-to-r from-blue-700 to-indigo-700 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition-all disabled:opacity-70 disabled:cursor-not-allowed"
             >
-              {isLoading ? (
-                <span className="animate-pulse">Logging in...</span>
-              ) : (
-                <>
-                  <LogIn className="w-5 h-5" />
-                  Login to Dashboard
-                </>
-              )}
+              {isLoading ? "Logging in..." : "Login to Dashboard"}
             </button>
-          </form>
-
-          {/* Register Link */}
-          <div className="mt-8 pt-6 border-t border-slate-100 text-center">
-            <Link href="/internship" className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 font-semibold text-base">
-              Don't have an account? Register here
-              <ArrowRight className="w-4 h-4" />
-            </Link>
           </div>
+        </form>
+
+        {/* Register Link */}
+        <div className="mt-10 text-center">
+          <Link href="/internship" className="text-blue-600 hover:text-blue-700 font-medium text-base">
+            Don't have an account? Register here
+          </Link>
         </div>
+      </div>
       </div>
     </div>
   );

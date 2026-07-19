@@ -1,3 +1,5 @@
+/* Import Creato Display font (using a placeholder, adjust if using local font) */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap');
 @import "tailwindcss";
 
 :root {

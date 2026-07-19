@@ -2,27 +2,24 @@ import prisma from "@/lib/prisma";
 
 export async function POST(request: Request) {
   try {
-    const { name, collegeName, registrationNo, email, mobileNo, dateOfBirth, internshipId } = await request.json();
+    const { name, collegeName, registrationNo, email, mobileNo, dateOfBirth, session, internshipId } = await request.json();
     
-    // Check if student already exists by registrationNo OR email
+    // Check if student already exists by registrationNo only
     let existingStudent = await prisma.student.findUnique({
       where: { registrationNo },
     });
-
-    if (!existingStudent) {
-      existingStudent = await prisma.student.findUnique({
-        where: { email },
-      });
-    }
 
     let student;
     let enrollment;
 
     if (existingStudent) {
       student = existingStudent;
-      // Check if already enrolled in any internship
-      const existingEnrollment = await prisma.enrollment.findUnique({
-        where: { studentId: existingStudent.id },
+      // Check if already enrolled in this specific internship
+      const existingEnrollment = await prisma.enrollment.findFirst({
+        where: { 
+          studentId: existingStudent.id,
+          internshipId: parseInt(internshipId)
+        },
         include: { student: true, internship: { include: { tasks: true } }, payment: true }
       });
 
@@ -44,6 +41,7 @@ export async function POST(request: Request) {
           email, 
           mobileNo, 
           dateOfBirth: new Date(dateOfBirth), 
+          session,
           internshipType: "Hybrid (Online)" 
         },
       });
