@@ -400,13 +400,145 @@
 //   );
 // }
 
+// "use client";
+// import Link from "next/link";
+// import Image from "next/image";
+// import { usePathname } from "next/navigation";
+// import { useState } from "react";
+
+// export default function HeroWithNavbar() {
+//   const pathname = usePathname();
+//   const [isOpen, setIsOpen] = useState(false);
+
+//   const navLinks = [
+//     { name: "Services", href: "/#services" },
+//     { name: "About", href: "/#about" },
+//     { name: "Technologies", href: "/#technologies" },
+//     { name: "Team", href: "/#team" },
+//     { name: "Internship", href: "/internship" },
+//     { name: "Contact", href: "/contact" },
+//   ];
+
+//   return (
+//     <header className="relative h-screen overflow-hidden">
+//       {/* Background gradient */}
+//       <div className="absolute inset-0 bg-gradient-to-r from-[#0f172a] via-[#1e1b4b] to-[#0f172a] animate-gradient-x"></div>
+//       <div className="absolute inset-0 bg-black/40"></div>
+
+//       {/* Subtle glowing orbs */}
+//       <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
+//         <div className="absolute w-72 h-72 bg-blue-500/20 rounded-full blur-3xl top-10 left-20"></div>
+//         <div className="absolute w-96 h-96 bg-purple-500/20 rounded-full blur-3xl bottom-20 right-20"></div>
+//       </div>
+
+//       {/* Top Status Bar */}
+//       <div className="relative z-20 bg-black/40 backdrop-blur-sm text-white text-sm border-b border-white/10">
+//         <div className="container mx-auto flex justify-between items-center px-4 py-2">
+//           <span className="text-green-400 font-medium">✅ Protected • 99.99% uptime</span>
+//           <div className="flex items-center gap-4">
+//             <Link href="/status" className="hover:underline text-gray-200">System Status</Link>
+//             <a
+//               href="mailto:security@kodefort.com"
+//               className="bg-yellow-400 text-black px-3 py-1 rounded font-medium hover:bg-yellow-300"
+//             >
+//               Report Incident
+//             </a>
+//           </div>
+//         </div>
+//       </div>
+
+//       {/* Navbar */}
+//       <nav className="relative z-20 backdrop-blur-md bg-white/5 border-b border-white/10">
+//         <div className="container mx-auto flex justify-between items-center py-4 px-6">
+//           {/* Logo */}
+//           <Link href="/" className="flex items-center">
+//             <Image src="/logo.png" alt="Kodefort Logo" width={40} height={40} />
+//             <span className="ml-2 text-xl font-bold text-white">Kodefort</span>
+//           </Link>
+
+//           {/* Links (Desktop) */}
+//           <div className="hidden sm:flex gap-6">
+//             {navLinks.map((link) => (
+//               <Link
+//                 key={link.name}
+//                 href={link.href}
+//                 className={`text-gray-200 hover:text-blue-400 transition ${
+//                   pathname === link.href ? "text-blue-400 font-semibold" : ""
+//                 }`}
+//               >
+//                 {link.name}
+//               </Link>
+//             ))}
+//           </div>
+
+//           {/* Mobile menu button */}
+//           <button
+//             className="sm:hidden text-white"
+//             onClick={() => setIsOpen(!isOpen)}
+//           >
+//             ☰
+//           </button>
+//         </div>
+
+//         {/* Mobile Menu */}
+//         {isOpen && (
+//           <div className="sm:hidden bg-black/80 backdrop-blur-md">
+//             {navLinks.map((link) => (
+//               <Link
+//                 key={link.name}
+//                 href={link.href}
+//                 className="block px-6 py-3 text-white hover:text-blue-400"
+//                 onClick={() => setIsOpen(false)}
+//               >
+//                 {link.name}
+//               </Link>
+//             ))}
+//           </div>
+//         )}
+//       </nav>
+
+//       Hero Content
+//       <div className="relative z-10 flex flex-col items-center justify-center h-[calc(100%-100px)] text-center px-4">
+//         <h1 className="text-5xl md:text-7xl font-extrabold text-white drop-shadow-lg">
+//           Secure & Innovative Solutions
+//         </h1>
+//         <p className="mt-6 text-lg md:text-2xl text-gray-200 max-w-2xl mx-auto">
+//           Kodefort empowers businesses with cutting-edge software built with security at its core.
+//         </p>
+//         <a
+//           href="/contact"
+//           className="mt-8 inline-block bg-blue-600 text-white px-8 py-4 rounded-xl shadow-lg hover:bg-blue-700 transition"
+//         >
+//           Get in Touch
+//         </a>
+//       </div>
+
+//       {/* Animations */}
+//       <style jsx>{`
+//         @keyframes gradient-x {
+//           0% { background-position: 0% 50%; }
+//           50% { background-position: 100% 50%; }
+//           100% { background-position: 0% 50%; }
+//         }
+//         .animate-gradient-x {
+//           background-size: 200% 200%;
+//           animation: gradient-x 20s ease infinite;
+//         }
+//       `}</style>
+//     </header>
+//   );
+// }
+
+
+
 "use client";
-import Link from "next/link";
+
 import Image from "next/image";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 
-export default function HeroWithNavbar() {
+export default function Navbar() {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
 
@@ -415,116 +547,177 @@ export default function HeroWithNavbar() {
     { name: "About", href: "/#about" },
     { name: "Technologies", href: "/#technologies" },
     { name: "Team", href: "/#team" },
-    { name: "Internship", href: "/internship" },
     { name: "Contact", href: "/contact" },
   ];
 
   return (
-    <header className="relative h-screen overflow-hidden">
-      {/* Background gradient */}
-      <div className="absolute inset-0 bg-gradient-to-r from-[#0f172a] via-[#1e1b4b] to-[#0f172a] animate-gradient-x"></div>
-      <div className="absolute inset-0 bg-black/40"></div>
+    <header className="sticky top-0 z-50">
 
-      {/* Subtle glowing orbs */}
-      <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
-        <div className="absolute w-72 h-72 bg-blue-500/20 rounded-full blur-3xl top-10 left-20"></div>
-        <div className="absolute w-96 h-96 bg-purple-500/20 rounded-full blur-3xl bottom-20 right-20"></div>
-      </div>
+      {/* ================= Top Status Bar ================= */}
 
-      {/* Top Status Bar */}
-      <div className="relative z-20 bg-black/40 backdrop-blur-sm text-white text-sm border-b border-white/10">
-        <div className="container mx-auto flex justify-between items-center px-4 py-2">
-          <span className="text-green-400 font-medium">✅ Protected • 99.99% uptime</span>
-          <div className="flex items-center gap-4">
-            <Link href="/status" className="hover:underline text-gray-200">System Status</Link>
+      <div className="bg-gradient-to-r from-black via-slate-900 to-black border-b border-cyan-500/10">
+        <div className="container mx-auto flex items-center justify-between px-6 py-2">
+
+          <div className="flex items-center gap-2 text-sm">
+            <span className="h-2 w-2 rounded-full bg-green-400 animate-pulse"></span>
+            <span className="text-green-400 font-medium">
+              Protected • 99.99% Uptime
+            </span>
+          </div>
+
+          <div className="hidden md:flex items-center gap-6 text-sm">
+
+            <Link
+              href="/status"
+              className="text-slate-300 hover:text-cyan-400 transition"
+            >
+              System Status
+            </Link>
+
             <a
               href="mailto:security@kodefort.com"
-              className="bg-yellow-400 text-black px-3 py-1 rounded font-medium hover:bg-yellow-300"
+              className="rounded-lg bg-yellow-400 px-3 py-1 font-semibold text-black hover:bg-yellow-300 transition"
             >
               Report Incident
             </a>
+
           </div>
+
         </div>
       </div>
 
-      {/* Navbar */}
-      <nav className="relative z-20 backdrop-blur-md bg-white/5 border-b border-white/10">
-        <div className="container mx-auto flex justify-between items-center py-4 px-6">
+      {/* ================= Main Navbar ================= */}
+
+      <nav className="relative overflow-hidden bg-[#050816]/95 backdrop-blur-2xl border-b border-cyan-500/10 shadow-[0_10px_40px_rgba(0,0,0,.65)]">
+
+        {/* Background Glow */}
+
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute -top-20 -left-20 h-64 w-64 rounded-full bg-cyan-500/10 blur-3xl"></div>
+
+          <div className="absolute top-0 right-0 h-80 w-80 rounded-full bg-blue-600/10 blur-3xl"></div>
+        </div>
+
+        <div className="relative container mx-auto flex items-center justify-between px-6 py-4">
+
           {/* Logo */}
-          <Link href="/" className="flex items-center">
-            <Image src="/logo.png" alt="Kodefort Logo" width={40} height={40} />
-            <span className="ml-2 text-xl font-bold text-white">Kodefort</span>
+
+          <Link
+            href="/"
+            className="flex items-center gap-3"
+          >
+            <Image
+              src="/logo.png"
+              alt="Kodefort"
+              width={45}
+              height={45}
+            />
+
+            <span className="text-2xl font-bold text-white tracking-wide">
+              Kodefort
+            </span>
           </Link>
 
-          {/* Links (Desktop) */}
-          <div className="hidden sm:flex gap-6">
+          {/* Desktop Menu */}
+
+          <div className="hidden md:flex items-center gap-8">
+
             {navLinks.map((link) => (
               <Link
                 key={link.name}
                 href={link.href}
-                className={`text-gray-200 hover:text-blue-400 transition ${
-                  pathname === link.href ? "text-blue-400 font-semibold" : ""
+                className={`transition-all duration-300 ${
+                  pathname === link.href
+                    ? "text-cyan-400"
+                    : "text-slate-300 hover:text-cyan-400"
                 }`}
               >
                 {link.name}
               </Link>
             ))}
+
+            {/* Internship CTA */}
+
+            <Link
+              href="/internship"
+              className="rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 px-5 py-2.5 text-white font-semibold shadow-lg shadow-cyan-500/20 transition-all duration-300 hover:scale-105 hover:shadow-cyan-500/50"
+            >
+              🚀 Internship
+            </Link>
+
           </div>
 
-          {/* Mobile menu button */}
+          {/* Mobile Button */}
+
           <button
-            className="sm:hidden text-white"
             onClick={() => setIsOpen(!isOpen)}
+            className="md:hidden text-white"
           >
-            ☰
+            {isOpen ? (
+              <svg
+                className="h-7 w-7"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={2}
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            ) : (
+              <svg
+                className="h-7 w-7"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={2}
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M4 6h16M4 12h16M4 18h16"
+                />
+              </svg>
+            )}
           </button>
+
         </div>
 
-        {/* Mobile Menu */}
+        {/* ================= Mobile Menu ================= */}
+
         {isOpen && (
-          <div className="sm:hidden bg-black/80 backdrop-blur-md">
+          <div className="md:hidden border-t border-cyan-500/10 bg-[#050816]/95 backdrop-blur-xl">
+
             {navLinks.map((link) => (
               <Link
                 key={link.name}
                 href={link.href}
-                className="block px-6 py-3 text-white hover:text-blue-400"
                 onClick={() => setIsOpen(false)}
+                className="block px-6 py-4 text-slate-300 hover:bg-slate-900 hover:text-cyan-400 transition"
               >
                 {link.name}
               </Link>
             ))}
+
+            <div className="p-5">
+
+              <Link
+                href="/internship"
+                onClick={() => setIsOpen(false)}
+                className="block w-full rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 py-3 text-center font-semibold text-white"
+              >
+                🚀 Join Internship
+              </Link>
+
+            </div>
+
           </div>
         )}
+
       </nav>
-
-      {/* Hero Content */}
-      <div className="relative z-10 flex flex-col items-center justify-center h-[calc(100%-100px)] text-center px-4">
-        <h1 className="text-5xl md:text-7xl font-extrabold text-white drop-shadow-lg">
-          Secure & Innovative Solutions
-        </h1>
-        <p className="mt-6 text-lg md:text-2xl text-gray-200 max-w-2xl mx-auto">
-          Kodefort empowers businesses with cutting-edge software built with security at its core.
-        </p>
-        <a
-          href="/contact"
-          className="mt-8 inline-block bg-blue-600 text-white px-8 py-4 rounded-xl shadow-lg hover:bg-blue-700 transition"
-        >
-          Get in Touch
-        </a>
-      </div>
-
-      {/* Animations */}
-      <style jsx>{`
-        @keyframes gradient-x {
-          0% { background-position: 0% 50%; }
-          50% { background-position: 100% 50%; }
-          100% { background-position: 0% 50%; }
-        }
-        .animate-gradient-x {
-          background-size: 200% 200%;
-          animation: gradient-x 20s ease infinite;
-        }
-      `}</style>
     </header>
   );
 }
