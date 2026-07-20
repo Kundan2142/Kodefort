@@ -67,6 +67,9 @@ model Payment {
   enrollment   Enrollment @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
   amount       Int       @default(500)
   status       String    @default("pending") // pending, completed, failed
+  orderId      String?
+  paymentId    String?
+  receiptNo    String?   @unique
   createdAt    DateTime  @default(now())
 }
 

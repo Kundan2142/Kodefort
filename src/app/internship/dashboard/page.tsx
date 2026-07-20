@@ -63,6 +63,9 @@ interface Enrollment {
     id: number;
     status: string;
     createdAt?: string;
+    receiptNo?: string;
+    orderId?: string;
+    paymentId?: string;
   } | null;
 }
 
@@ -382,6 +385,9 @@ function DashboardContent() {
                             document={
                               <PaymentReceiptPDF
                                 receiptId={`KF-${selectedEnrollment.id}-${selectedEnrollment.payment?.id || '0'}-${Date.now()}`}
+                                receiptNo={selectedEnrollment.payment?.receiptNo}
+                                orderId={selectedEnrollment.payment?.orderId}
+                                paymentId={selectedEnrollment.payment?.paymentId}
                                 date={date}
                                 studentName={student.name || "N/A"}
                                 collegeName={student.collegeName || "N/A"}
@@ -770,6 +776,9 @@ function DashboardContent() {
                             document={
                               <PaymentReceiptPDF
                                 receiptId={`KF-${selectedEnrollment.id}-${selectedEnrollment.payment?.id || '0'}-${Date.now()}`}
+                                receiptNo={selectedEnrollment.payment?.receiptNo}
+                                orderId={selectedEnrollment.payment?.orderId}
+                                paymentId={selectedEnrollment.payment?.paymentId}
                                 date={date}
                                 studentName={student.name || "N/A"}
                                 collegeName={student.collegeName || "N/A"}

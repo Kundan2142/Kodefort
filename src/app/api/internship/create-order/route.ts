@@ -22,12 +22,32 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Enrollment not found' }, { status: 404 });
     }
 
+    // Generate unique receipt number
+    let receiptNo = "";
+    let isUnique = false;
+    while (!isUnique) {
+      receiptNo = `KFT-${Date.now()}-${Math.floor(Math.random() * 1000000)}`; // Increase random range to 1M
+      const existing = await prisma.payment.findUnique({
+        where: { receiptNo },
+      });
+      isUnique = !existing;
+    }
+
     // Create Razorpay order (amount in paise, 500 INR = 50000 paise)
     const order = await razorpay.orders.create({
       amount: 500 * 100,
       currency: 'INR',
-      receipt: `receipt_${enrollmentId}`,
+      receipt: receiptNo,
       payment_capture: true,
+    });
+
+    // Update payment with orderId and receiptNo
+    await prisma.payment.update({
+      where: { enrollmentId: parseInt(enrollmentId) },
+      data: {
+        orderId: order.id,
+        receiptNo: receiptNo,
+      },
     });
 
     return NextResponse.json({ orderId: order.id, amount: order.amount, currency: order.currency });

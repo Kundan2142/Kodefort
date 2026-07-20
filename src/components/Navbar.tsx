@@ -31,17 +31,11 @@ export default function Navbar() {
         {/* Bottom highlight */}
         <div className="absolute bottom-0 left-0 h-px w-full bg-gradient-to-r from-transparent via-sky-200 to-transparent"></div>
 
-        <div className="max-w-[1400px] mx-auto flex items-center justify-between px-6 py-1.5">
+        <div className="max-w-[1400px] mx-auto flex items-center justify-between px-4 sm:px-6 py-2">
           {/* Left: Status */}
-          <div className="flex items-center gap-3 font-medium text-sky-700">
+          <div className="flex items-center gap-2 font-medium text-sky-700">
             <ShieldCheck className="h-4 w-4 text-emerald-500" />
-            <div className="flex flex-col text-xs leading-tight">
-              <span>Protected</span>
-              <span className="text-emerald-600 font-semibold">99.99% Uptime</span>
-            </div>
-            <div className="hidden sm:block text-[10px] uppercase tracking-widest text-sky-600/80 font-medium border-l border-sky-200 pl-3">
-              SOC 2 READY
-            </div>
+            <span className="text-sm">🛡️ 99.99% Uptime</span>
           </div>
 
           {/* Right: Links + Button */}
@@ -65,16 +59,16 @@ export default function Navbar() {
 
       {/* ================= Main Navbar ================= */}
       <nav className="bg-white/70 backdrop-blur-2xl border-b border-slate-200 shadow-[0_8px_30px_rgba(15,23,42,0.05)]">
-        <div className="max-w-[1400px] mx-auto h-20 flex items-center justify-between px-6">
+        <div className="max-w-[1400px] mx-auto h-14 sm:h-16 flex items-center justify-between px-4 sm:px-6">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-3">
+          <Link href="/" className="flex items-center gap-2">
             <Image
               src="/logo.png"
               alt="Kodefort"
-              width={40}
-              height={40}
+              width={36}
+              height={36}
             />
-            <span className="text-lg font-semibold tracking-tight text-slate-900">
+            <span className="text-base sm:text-lg font-semibold tracking-tight text-slate-900">
               Kodefort
             </span>
           </Link>
@@ -107,7 +101,7 @@ export default function Navbar() {
           {/* Mobile Menu Button */}
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className="md:hidden text-slate-700"
+            className="md:hidden text-slate-700 w-10 h-10 flex items-center justify-center"
             aria-label={isOpen ? "Close menu" : "Open menu"}
           >
             {isOpen ? (

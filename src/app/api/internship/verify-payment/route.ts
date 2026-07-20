@@ -15,11 +15,12 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Invalid signature' }, { status: 400 });
     }
 
-    // Update payment status in DB
+    // Update payment status and paymentId in DB
     await prisma.payment.update({
       where: { enrollmentId: parseInt(enrollmentId) },
       data: {
         status: 'completed',
+        paymentId: razorpay_payment_id,
       },
     });
 

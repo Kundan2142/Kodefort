@@ -157,6 +157,9 @@ const styles = StyleSheet.create({
 
 interface PaymentReceiptPDFProps {
   receiptId: string;
+  receiptNo?: string;
+  orderId?: string;
+  paymentId?: string;
   date: string;
   studentName: string;
   collegeName: string;
@@ -170,6 +173,9 @@ interface PaymentReceiptPDFProps {
 
 const PaymentReceiptPDF: React.FC<PaymentReceiptPDFProps> = ({
   receiptId,
+  receiptNo,
+  orderId,
+  paymentId,
   date,
   studentName,
   collegeName,
@@ -198,7 +204,7 @@ const PaymentReceiptPDF: React.FC<PaymentReceiptPDFProps> = ({
         </View>
         <View style={styles.receiptInfo}>
           <Text style={styles.receiptLabel}>Receipt No</Text>
-          <Text style={styles.receiptId}>{receiptId}</Text>
+          <Text style={styles.receiptId}>{receiptNo || receiptId}</Text>
         </View>
       </View>
 
@@ -255,6 +261,18 @@ const PaymentReceiptPDF: React.FC<PaymentReceiptPDFProps> = ({
             <Text style={styles.label}>Payment Date:</Text>
             <Text style={styles.value}>{date}</Text>
           </View>
+          {orderId && (
+            <View style={styles.row}>
+              <Text style={styles.label}>Order ID:</Text>
+              <Text style={styles.value}>{orderId}</Text>
+            </View>
+          )}
+          {paymentId && (
+            <View style={styles.row}>
+              <Text style={styles.label}>Payment ID:</Text>
+              <Text style={styles.value}>{paymentId}</Text>
+            </View>
+          )}
           <View style={styles.row}>
             <Text style={styles.label}>Payment Status:</Text>
             <View style={styles.statusBadge}>
