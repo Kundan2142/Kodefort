@@ -421,7 +421,6 @@ function DashboardContent() {
                           <PDFDownloadLink
                             document={
                               <OfferLetterPDF
-                                date={date}
                                 studentName={student.name || "N/A"}
                                 collegeName={student.collegeName || "N/A"}
                                 registrationNo={student.registrationNo || "N/A"}
@@ -811,7 +810,6 @@ function DashboardContent() {
                           <PDFDownloadLink
                             document={
                               <OfferLetterPDF
-                                date={date}
                                 studentName={student.name || "N/A"}
                                 collegeName={student.collegeName || "N/A"}
                                 registrationNo={student.registrationNo || "N/A"}

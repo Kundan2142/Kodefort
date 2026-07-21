@@ -25,7 +25,15 @@ function RegisterContent() {
     mobileNo: "",
     dateOfBirth: "",
     session: "",
+    degree: "",
+    subject: "",
   });
+
+  const degreeSubjects = {
+    "B.Sc": ["Phy", "Chem", "Math", "Zoology", "Botany"],
+    "B.Com": ["Commerce"],
+    "BA": ["HISTORY", "GEOGRAPHY", "SOCIOLOGY", "PSYCHOLOGY", "POLITICAL SCIENCE", "ECONOMICS", "ENGLISH", "HINDI", "URDU", "SANSKRIT", "HOME SCIENCE", "PA", "LSW", "PHILOSOPHY"]
+  };
 
   useEffect(() => {
     const fetchInternships = async () => {
@@ -195,6 +203,45 @@ function RegisterContent() {
                 value={formData.registrationNo}
                 onChange={(e) => setFormData({ ...formData, registrationNo: e.target.value })}
               />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {/* Degree */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-slate-700">
+                Degree<span className="text-red-600">*</span>
+              </label>
+              <select
+                required
+                className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+                value={formData.degree}
+                onChange={(e) => setFormData({ ...formData, degree: e.target.value, subject: "" })}
+              >
+                <option value="">Select Degree</option>
+                <option value="B.Sc">B.Sc</option>
+                <option value="B.Com">B.Com</option>
+                <option value="BA">BA</option>
+              </select>
+            </div>
+
+            {/* Subject */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-slate-700">
+                Subject<span className="text-red-600">*</span>
+              </label>
+              <select
+                required
+                className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+                value={formData.subject}
+                onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
+                disabled={!formData.degree}
+              >
+                <option value="">Select Subject</option>
+                {formData.degree && degreeSubjects[formData.degree as keyof typeof degreeSubjects].map((subject) => (
+                  <option key={subject} value={subject}>{subject}</option>
+                ))}
+              </select>
             </div>
           </div>
 

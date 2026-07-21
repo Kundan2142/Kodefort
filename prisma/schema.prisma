@@ -31,6 +31,8 @@ model Student {
   mobileNo     String
   dateOfBirth  DateTime
   session      String
+  degree       String?
+  subject      String?
   internshipType String    @default("Hybrid (Online)")
   enrollments  Enrollment[]
   createdAt    DateTime     @default(now())

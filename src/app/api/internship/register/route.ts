@@ -2,7 +2,7 @@ import prisma from "@/lib/prisma";
 
 export async function POST(request: Request) {
   try {
-    const { name, collegeName, registrationNo, email, mobileNo, dateOfBirth, session, internshipId } = await request.json();
+    const { name, collegeName, registrationNo, email, mobileNo, dateOfBirth, session, internshipId, degree, subject } = await request.json();
     
     // Check if student already exists by registrationNo only
     let existingStudent = await prisma.student.findUnique({
@@ -42,6 +42,8 @@ export async function POST(request: Request) {
           mobileNo, 
           dateOfBirth: new Date(dateOfBirth), 
           session,
+          degree,
+          subject,
           internshipType: "Hybrid (Online)" 
         },
       });

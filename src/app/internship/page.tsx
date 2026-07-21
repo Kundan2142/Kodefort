@@ -178,13 +178,13 @@ export default function InternshipPage() {
                   </p>
 
                   <div className="flex flex-wrap gap-3 mb-8">
-                    <div className="inline-flex items-center gap-1.5 bg-slate-100 px-4 py-1 rounded-full text-sm">
+                    <div className="inline-flex items-center gap-1.5 bg-slate-100 text-slate-900 px-4 py-1 rounded-full text-sm">
                       ★★★★☆ <span className="font-medium">{internship.rating}</span>
                     </div>
-                    <div className="inline-flex items-center gap-1.5 bg-slate-100 px-4 py-1 rounded-full text-sm">
+                    <div className="inline-flex items-center gap-1.5 bg-slate-100 text-slate-900 px-4 py-1 rounded-full text-sm">
                       {internship.difficulty}
                     </div>
-                    <div className="inline-flex items-center gap-1.5 bg-slate-100 px-4 py-1 rounded-full text-sm">
+                    <div className="inline-flex items-center gap-1.5 bg-slate-100 text-slate-900 px-4 py-1 rounded-full text-sm">
                       {internship.tasks?.length || 0} Lessons
                     </div>
                   </div>

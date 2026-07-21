@@ -152,19 +152,11 @@ const styles = StyleSheet.create({
   },
   signatureContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-end',
     alignItems: 'flex-end',
     marginTop: 15,
   },
-  sealSection: {
-    width: 80,
-    alignSelf: 'flex-start',
-  },
-  sealImage: {
-    width: 55,
-    height: 55,
-    marginTop: -35,
-  },
+
   signature: {
     flexDirection: 'column',
     alignItems: 'flex-end',
@@ -196,7 +188,6 @@ const styles = StyleSheet.create({
 });
 
 interface OfferLetterPDFProps {
-  date: string;
   studentName: string;
   collegeName: string;
   registrationNo: string;
@@ -206,7 +197,6 @@ interface OfferLetterPDFProps {
 }
 
 const OfferLetterPDF: React.FC<OfferLetterPDFProps> = ({
-  date,
   studentName,
   collegeName,
   registrationNo,
@@ -222,13 +212,6 @@ const OfferLetterPDF: React.FC<OfferLetterPDFProps> = ({
       </View>
       {/* Content Container */}
       <View style={styles.contentContainer}>
-        {/* Date Section */}
-        <View style={styles.headerContainer}>
-          <View style={styles.dateSection}>
-            <Text style={styles.dateValue}>{date}</Text>
-          </View>
-        </View>
-
       {/* Title */}
       <Text style={styles.letterTitle}>INTERNSHIP OFFER LETTER</Text>
 
@@ -269,6 +252,10 @@ const OfferLetterPDF: React.FC<OfferLetterPDFProps> = ({
           <View style={styles.labelValueRow}>
             <Text style={styles.label}>Mode:</Text>
             <Text style={styles.value}>Hybrid (Online)</Text>
+          </View>
+          <View style={styles.labelValueRow}>
+            <Text style={styles.label}>Duration:</Text>
+            <Text style={styles.value}>120 Hours</Text>
           </View>
           <View style={styles.labelValueRow}>
             <Text style={styles.label}>Registration No:</Text>
@@ -329,11 +316,8 @@ const OfferLetterPDF: React.FC<OfferLetterPDFProps> = ({
         </Text>
       </View>
 
-      {/* Signature and Seal */}
+      {/* Signature */}
       <View style={styles.signatureContainer}>
-        <View style={styles.sealSection}>
-          <Image src="/seal.jpeg" style={styles.sealImage} />
-        </View>
         <View style={styles.signature}>
           <View style={styles.signatureBlock}>
             <Image src="/sign.jpeg" style={styles.signatureImage} />
