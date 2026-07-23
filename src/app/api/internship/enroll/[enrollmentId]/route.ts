@@ -21,7 +21,7 @@ export async function GET(
     console.log("Querying Prisma for enrollment with id:", id);
     const enrollment = await prisma.enrollment.findUnique({
       where: { id },
-      include: { student: true, internship: { include: { tasks: true } }, payment: true }
+      include: { student: true, internship: { include: { tasks: true } }, payment: true, completedTasks: true }
     });
     console.log("Prisma findUnique result (enrollment):", enrollment);
     if (!enrollment) {

@@ -52,15 +52,27 @@ model Internship {
 }
 
 model Enrollment {
-  id           Int       @id @default(autoincrement())
+  id           Int               @id @default(autoincrement())
   studentId    Int
   internshipId Int
-  student      Student   @relation(fields: [studentId], references: [id], onDelete: Cascade)
-  internship   Internship @relation(fields: [internshipId], references: [id], onDelete: Cascade)
+  student      Student           @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  internship   Internship        @relation(fields: [internshipId], references: [id], onDelete: Cascade)
   payment      Payment?
-  createdAt    DateTime  @default(now())
+  completedTasks CompletedTask[]
+  createdAt    DateTime          @default(now())
 
   @@unique([studentId, internshipId])
+}
+
+model CompletedTask {
+  id           Int       @id @default(autoincrement())
+  enrollmentId Int
+  taskId       Int
+  enrollment   Enrollment @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
+  task         Task      @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  completedAt  DateTime  @default(now())
+
+  @@unique([enrollmentId, taskId])
 }
 
 model Payment {
@@ -76,12 +88,13 @@ model Payment {
 }
 
 model Task {
-  id           Int       @id @default(autoincrement())
+  id           Int               @id @default(autoincrement())
   internshipId Int
-  internship   Internship @relation(fields: [internshipId], references: [id], onDelete: Cascade)
+  internship   Internship        @relation(fields: [internshipId], references: [id], onDelete: Cascade)
   title        String
   description  String
   youtubeUrl   String?
   order        Int
-  createdAt    DateTime  @default(now())
+  completedTasks CompletedTask[]
+  createdAt    DateTime          @default(now())
 }

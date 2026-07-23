@@ -67,6 +67,7 @@ interface Enrollment {
     orderId?: string;
     paymentId?: string;
   } | null;
+  completedTasks: { id: number; taskId: number }[];
 }
 
 function DashboardContent() {
@@ -79,7 +80,49 @@ function DashboardContent() {
   // Keep track of whether we've shown the download screen already
   const [hasSeenDownloadScreen, setHasSeenDownloadScreen] = useState(false);
   const [isPaying, setIsPaying] = useState(false);
+  const [togglingTaskId, setTogglingTaskId] = useState<number | null>(null);
   const enrollmentIdFromQuery = searchParams.get("enrollmentId");
+  
+  // Function to toggle task completion
+  const toggleTaskCompletion = async (taskId: number) => {
+    if (!selectedEnrollment) return;
+    console.log("Toggling task completion for task ID:", taskId);
+    
+    // Optimistic update first for instant feedback
+    const isCurrentlyCompleted = selectedEnrollment.completedTasks?.some(ct => ct.taskId === taskId);
+    console.log("Currently completed:", isCurrentlyCompleted);
+    
+    setSelectedEnrollment({
+      ...selectedEnrollment,
+      completedTasks: isCurrentlyCompleted
+        ? selectedEnrollment.completedTasks?.filter(ct => ct.taskId !== taskId)
+        : [...(selectedEnrollment.completedTasks || []), { id: Date.now(), taskId }]
+    });
+    
+    setTogglingTaskId(taskId);
+    try {
+      const response = await fetch(`/api/internship/enroll/${selectedEnrollment.id}/tasks/${taskId}/toggle`, {
+        method: "POST",
+      });
+      console.log("Toggle API response status:", response.status);
+      
+      if (response.ok) {
+        // Refresh the enrollment data to confirm
+        const updatedEnrollRes = await fetch(`/api/internship/enroll/${selectedEnrollment.id}`);
+        if (updatedEnrollRes.ok) {
+          const updatedEnrollment = await updatedEnrollRes.json();
+          console.log("Updated enrollment from API:", updatedEnrollment);
+          setSelectedEnrollment(updatedEnrollment);
+        }
+      }
+    } catch (error) {
+      console.error("Error toggling task completion:", error);
+      // Revert optimistic update on error
+      setSelectedEnrollment(selectedEnrollment);
+    } finally {
+      setTogglingTaskId(null);
+    }
+  };
   console.log("=== DashboardPage Component Initialization ===");
   console.log("searchParams.toString():", searchParams.toString());
   console.log("enrollmentIdFromQuery:", enrollmentIdFromQuery);
@@ -511,27 +554,27 @@ function DashboardContent() {
 
             {/* Progress Indicator */}
             <div className="flex items-center gap-4">
-              <div className="relative w-20 h-20 bg-white rounded-full shadow-lg border border-orange-100">
+              <div className="relative w-28 h-28 bg-white rounded-full shadow-2xl border-4 border-orange-100">
                 <svg className="w-full h-full transform -rotate-90">
-                  <circle cx="40" cy="40" r="36" fill="none" stroke="#f9731620" strokeWidth="6" />
+                  <circle cx="56" cy="56" r="48" fill="none" stroke="#fed7aa" strokeWidth="8" />
                   <circle 
-                    cx="40" cy="40" r="36" fill="none" 
+                    cx="56" cy="56" r="48" fill="none" 
                     stroke={selectedEnrollment.payment?.status === "completed" ? "#10b981" : "#f97316"} 
-                    strokeWidth="6" 
-                    strokeDasharray="226.2" 
-                    strokeDashoffset={selectedEnrollment.payment?.status === "completed" ? "0" : "113.1"}
+                    strokeWidth="8" 
+                    strokeDasharray="301.6" 
+                    strokeDashoffset={selectedEnrollment.payment?.status === "completed" 
+                      ? 301.6 - (301.6 * (selectedEnrollment.completedTasks?.length || 0)) / (selectedEnrollment.internship.tasks?.length || 1)
+                      : 301.6}
                     strokeLinecap="round"
+                    className="transition-all duration-500 ease-out"
                   />
                 </svg>
                 <div className="absolute inset-0 flex flex-col items-center justify-center">
-                  <span className="text-xl font-bold text-slate-900" style={{ fontFamily: 'Creato Display, Outfit, sans-serif' }}>
-                    {selectedEnrollment.payment?.status === "completed" ? (
-                      selectedEnrollment.internship.tasks?.length || 0
-                    ) : 0}
-                    /
-                    {selectedEnrollment.internship.tasks?.length || 0}
+                  <span className="text-3xl font-extrabold text-slate-900" style={{ fontFamily: 'Creato Display, Outfit, sans-serif' }}>
+                    {selectedEnrollment.completedTasks?.length || 0}
                   </span>
-                  <span className="text-xs text-slate-500">Tasks</span>
+                  <span className="text-xs text-slate-500 font-semibold">/ {selectedEnrollment.internship.tasks?.length || 0}</span>
+                  <span className="text-xs text-slate-500 mt-1">Tasks</span>
                 </div>
               </div>
             </div>
@@ -703,43 +746,43 @@ function DashboardContent() {
           ) : (
             <>
               {/* Stats Cards */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
-                <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+                <div className="bg-gradient-to-br from-orange-50 to-white border-2 border-orange-200 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
                   <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 bg-orange-50 rounded-xl flex items-center justify-center text-orange-600">
-                      <BookOpen className="w-6 h-6" />
+                    <div className="w-14 h-14 bg-orange-100 rounded-xl flex items-center justify-center text-orange-600">
+                      <BookOpen className="w-8 h-8" />
                     </div>
                     <div>
-                      <p className="text-3xl font-extrabold text-slate-900" style={{ fontFamily: 'Creato Display, Outfit, sans-serif' }}>
+                      <p className="text-4xl font-extrabold text-slate-900" style={{ fontFamily: 'Creato Display, Outfit, sans-serif' }}>
                         {selectedEnrollment.internship.tasks?.length || 0}
                       </p>
-                      <p className="text-sm text-slate-500">Total Tasks</p>
+                      <p className="text-sm text-slate-600 font-semibold">Total Tasks</p>
                     </div>
                   </div>
                 </div>
-                <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+                <div className="bg-gradient-to-br from-green-50 to-white border-2 border-green-200 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
                   <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 bg-orange-50 rounded-xl flex items-center justify-center text-orange-600">
-                      <CheckCircle2 className="w-6 h-6" />
+                    <div className="w-14 h-14 bg-green-100 rounded-xl flex items-center justify-center text-green-600">
+                      <CheckCircle2 className="w-8 h-8" />
                     </div>
                     <div>
-                      <p className="text-3xl font-extrabold text-slate-900" style={{ fontFamily: 'Creato Display, Outfit, sans-serif' }}>
-                        0
+                      <p className="text-4xl font-extrabold text-slate-900" style={{ fontFamily: 'Creato Display, Outfit, sans-serif' }}>
+                        {selectedEnrollment.completedTasks?.length || 0}
                       </p>
-                      <p className="text-sm text-slate-500">Completed</p>
+                      <p className="text-sm text-slate-600 font-semibold">Completed</p>
                     </div>
                   </div>
                 </div>
-                <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+                <div className="bg-gradient-to-br from-blue-50 to-white border-2 border-blue-200 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
                   <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 bg-orange-50 rounded-xl flex items-center justify-center text-orange-600">
-                      <FileText className="w-6 h-6" />
+                    <div className="w-14 h-14 bg-blue-100 rounded-xl flex items-center justify-center text-blue-600">
+                      <FileText className="w-8 h-8" />
                     </div>
                     <div>
-                      <p className="text-3xl font-extrabold text-slate-900" style={{ fontFamily: 'Creato Display, Outfit, sans-serif' }}>
+                      <p className="text-4xl font-extrabold text-slate-900" style={{ fontFamily: 'Creato Display, Outfit, sans-serif' }}>
                         2
                       </p>
-                      <p className="text-sm text-slate-500">Documents</p>
+                      <p className="text-sm text-slate-600 font-semibold">Documents</p>
                     </div>
                   </div>
                 </div>
@@ -747,12 +790,12 @@ function DashboardContent() {
 
               {/* Tasks Section */}
               <div className="mb-4">
-                <h2 className="text-2xl font-bold text-slate-900 mb-4" style={{ fontFamily: 'Creato Display, Outfit, sans-serif' }}>
-                  Tasks
+                <h2 className="text-3xl font-extrabold text-slate-900 mb-6" style={{ fontFamily: 'Creato Display, Outfit, sans-serif' }}>
+                  Day 1 Tasks
                 </h2>
                 
                 {/* Search and Actions Bar */}
-                <div className="flex flex-col md:flex-row gap-4 items-center justify-between mb-6">
+                <div className="flex flex-col md:flex-row gap-4 items-center justify-between mb-8">
                   <div className="relative w-full md:w-96">
                     <svg className="w-5 h-5 text-orange-400 absolute left-4 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -843,70 +886,160 @@ function DashboardContent() {
                   </div>
                 </div>
 
-                {/* Tasks Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {selectedEnrollment.internship.tasks.map((task) => (
-                    <div 
-                      key={task.id} 
-                      className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow"
-                    >
-                      {/* Thumbnail */}
-                      <div className="relative aspect-video bg-slate-100">
-                        {task.youtubeUrl ? (
-                          <iframe
-                            width="100%"
-                            height="100%"
-                            src={task.youtubeUrl.replace("watch?v=", "embed/")}
-                            title={task.title}
-                            frameBorder="0"
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                            allowFullScreen
-                            className="w-full h-full"
-                          ></iframe>
-                        ) : (
-                          <img 
-                            src={internshipImages[selectedEnrollment.internship.name] || "https://images.unsplash.com/photo-1516116216624-53e697fedbea?auto=format&fit=crop&w=800&q=80"} 
-                            alt={task.title} 
-                            className="w-full h-full object-cover"
-                          />
-                        )}
-                        {/* Status Badge */}
-                        <div className="absolute top-4 left-4">
-                          <span className="inline-flex items-center gap-1 bg-teal-500 text-white px-3 py-1 rounded-full text-sm font-semibold shadow-sm">
-                            <Check className="w-3 h-3" />
-                            Pending
-                          </span>
-                        </div>
-                      </div>
-
-                      {/* Task Content */}
-                      <div className="p-5">
-                        <h3 className="text-lg font-bold text-slate-900 mb-2" style={{ fontFamily: 'Creato Display, Outfit, sans-serif' }}>
-                          {task.order}. {task.title}
-                        </h3>
-                        <p className="text-sm text-slate-500 line-clamp-2 mb-4">
-                          {task.description}
-                        </p>
-                        
-                        {/* Footer */}
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2">
-                            <div className="flex -space-x-2">
-                              {[1, 2, 3].map((i) => (
-                                <div key={i} className="w-6 h-6 rounded-full bg-slate-300 border-2 border-white" />
-                              ))}
+                {/* Video Lessons */}
+                <div className="mb-10">
+                  <h3 className="text-xl font-bold text-slate-900 mb-4 flex items-center gap-2" style={{ fontFamily: 'Creato Display, Outfit, sans-serif' }}>
+                    <svg className="w-6 h-6 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    Video Lessons
+                  </h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {selectedEnrollment.internship.tasks
+                      .filter(task => task.youtubeUrl)
+                      .map((task) => {
+                        const isCompleted = selectedEnrollment.completedTasks?.some(ct => ct.taskId === task.id);
+                        return (
+                        <div 
+                          key={task.id} 
+                          className={`bg-white border-2 rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 ${isCompleted ? 'border-green-500 bg-green-50' : 'border-slate-200 hover:border-orange-300'}`}
+                        >
+                          {/* Thumbnail */}
+                          <div className="relative aspect-video bg-slate-100">
+                            {task.youtubeUrl && (
+                              <iframe
+                                width="100%"
+                                height="100%"
+                                src={task.youtubeUrl}
+                                title={task.title}
+                                frameBorder="0"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                allowFullScreen
+                                className="w-full h-full"
+                              ></iframe>
+                            )}
+                            {/* Status Badge & Checkbox */}
+                            <div className="absolute top-4 left-4 flex items-center gap-3">
+                              <button
+                                onClick={() => toggleTaskCompletion(task.id)}
+                                disabled={togglingTaskId === task.id}
+                                className={`w-12 h-12 rounded-full flex items-center justify-center shadow-xl transition-all duration-300 ${isCompleted ? 'bg-green-500 text-white hover:bg-green-600 scale-105' : 'bg-white text-slate-600 hover:bg-slate-100 border-2 border-slate-300 hover:border-orange-400'}`}
+                              >
+                                {togglingTaskId === task.id ? (
+                                  <Loader2 className="w-6 h-6 animate-spin" />
+                                ) : isCompleted ? (
+                                  <Check className="w-7 h-7 font-bold" />
+                                ) : (
+                                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                                  </svg>
+                                )}
+                              </button>
+                              <span className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-bold shadow-lg ${isCompleted ? 'bg-green-500 text-white' : 'bg-blue-500 text-white'}`}>
+                                {isCompleted ? (
+                                  <>
+                                    <CheckCircle2 className="w-4 h-4" />
+                                    Completed
+                                  </>
+                                ) : (
+                                  <>
+                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                    Pending
+                                  </>
+                                )}
+                              </span>
                             </div>
-                            <span className="text-xs text-slate-400">Just now</span>
                           </div>
-                          <button className="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center text-white hover:bg-orange-600 transition-colors">
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                            </svg>
-                          </button>
+
+                          {/* Task Content */}
+                          <div className="p-5">
+                            <h3 className="text-lg font-bold text-slate-900 mb-2" style={{ fontFamily: 'Creato Display, Outfit, sans-serif' }}>
+                              {task.order}. {task.title}
+                            </h3>
+                            <p className="text-sm text-slate-500 line-clamp-2">
+                              {task.description}
+                            </p>
+                          </div>
                         </div>
-                      </div>
-                    </div>
-                  ))}
+                      )})}
+                  </div>
+                </div>
+
+                {/* Assignments */}
+                <div>
+                  <h3 className="text-xl font-bold text-slate-900 mb-4 flex items-center gap-2" style={{ fontFamily: 'Creato Display, Outfit, sans-serif' }}>
+                    <svg className="w-6 h-6 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    Assignments
+                  </h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {selectedEnrollment.internship.tasks
+                      .filter(task => !task.youtubeUrl)
+                      .map((task) => {
+                        const isCompleted = selectedEnrollment.completedTasks?.some(ct => ct.taskId === task.id);
+                        return (
+                        <div 
+                          key={task.id} 
+                          className={`bg-white border-2 rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 ${isCompleted ? 'border-green-500 bg-green-50' : 'border-slate-200 hover:border-orange-300'}`}
+                        >
+                          {/* Thumbnail */}
+                          <div className="relative aspect-video bg-slate-100">
+                            <img 
+                              src={internshipImages[selectedEnrollment.internship.name] || "https://images.unsplash.com/photo-1516116216624-53e697fedbea?auto=format&fit=crop&w=800&q=80"} 
+                              alt={task.title} 
+                              className="w-full h-full object-cover"
+                            />
+                            {/* Status Badge & Checkbox */}
+                            <div className="absolute top-4 left-4 flex items-center gap-3">
+                              <button
+                                onClick={() => toggleTaskCompletion(task.id)}
+                                disabled={togglingTaskId === task.id}
+                                className={`w-12 h-12 rounded-full flex items-center justify-center shadow-xl transition-all duration-300 ${isCompleted ? 'bg-green-500 text-white hover:bg-green-600 scale-105' : 'bg-white text-slate-600 hover:bg-slate-100 border-2 border-slate-300 hover:border-orange-400'}`}
+                              >
+                                {togglingTaskId === task.id ? (
+                                  <Loader2 className="w-6 h-6 animate-spin" />
+                                ) : isCompleted ? (
+                                  <Check className="w-7 h-7 font-bold" />
+                                ) : (
+                                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                                  </svg>
+                                )}
+                              </button>
+                              <span className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-bold shadow-lg ${isCompleted ? 'bg-green-500 text-white' : 'bg-orange-500 text-white'}`}>
+                                {isCompleted ? (
+                                  <>
+                                    <CheckCircle2 className="w-4 h-4" />
+                                    Completed
+                                  </>
+                                ) : (
+                                  <>
+                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                    </svg>
+                                    Assignment
+                                  </>
+                                )}
+                              </span>
+                            </div>
+                          </div>
+
+                          {/* Task Content */}
+                          <div className="p-5">
+                            <h3 className="text-lg font-bold text-slate-900 mb-2" style={{ fontFamily: 'Creato Display, Outfit, sans-serif' }}>
+                              {task.order}. {task.title}
+                            </h3>
+                            <p className="text-sm text-slate-500 line-clamp-2">
+                              {task.description}
+                            </p>
+                          </div>
+                        </div>
+                      )})}
+                  </div>
                 </div>
               </div>
             </>
