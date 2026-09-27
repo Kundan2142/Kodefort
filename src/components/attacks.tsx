@@ -86,7 +86,7 @@ export default function RecentAttacksPage() {
                 Read more
               </a>
               <time className="text-xs text-gray-400">
-                {new Date(attack.date).toLocaleDateString()}
+                {new Date(attack.date).toLocaleDateString("en-IN", { day: "2-digit", month: "2-digit", year: "numeric" })}
               </time>
             </div>
           </div>
