@@ -7,309 +7,366 @@ import {
   StyleSheet,
 } from '@react-pdf/renderer';
 
+// ---- LAYOUT CONSTANTS (A4 LANDSCAPE: 842 x 595 pt) ----
+const PAGE_W = 842;
+const PAGE_H = 595;
+const FRAME = 22;             // outer frame inset
+const INNER_PAD = 56;         // side padding for content
+const CONTENT_W = PAGE_W - 2 * INNER_PAD; // 730
+
+const V_START = 48;           // reduced top padding so content fits on one page
+
+const FONT = {
+  BRAND: 13,
+  BRAND_TAG: 8,
+  TITLE: 34,                  // slightly reduced
+  SUBTITLE: 9.5,
+  PRESENTED: 9,
+  NAME: 28,                   // slightly reduced
+  LABEL: 8,
+  COLLEGE: 12,
+  DESC: 10.5,
+  TOPIC_LABEL: 8,
+  TOPIC_VAL: 16,
+  GRID_LABEL: 8,
+  GRID_VAL: 11,
+  SIG_NAME: 11,
+  SIG_TITLE: 8,
+  FOOTER: 7.5,
+  ID_LABEL: 7.5,
+  ID_VAL: 9.5,
+};
+
+const TRACK = {
+  BRAND: 7,
+  BRAND_TAG: 3.5,
+  TITLE: 8,
+  SUBTITLE: 8,
+  PRESENTED: 4.5,
+  LABEL: 2.5,
+  GRID_LABEL: 2,
+  SIG_TITLE: 1.5,
+  FOOTER: 2.5,
+  ID_LABEL: 2,
+};
+
 const styles = StyleSheet.create({
   page: {
-    fontFamily: "Helvetica",
-    backgroundColor: "#ffffff",
+    fontFamily: 'Helvetica',
+    backgroundColor: '#ffffff',
     padding: 0,
-    fontSize: 12,
-    lineHeight: 1.4,
+    lineHeight: 1.2,
+    position: 'relative',
   },
   outerFrame: {
-    position: "absolute",
-    top: 20,
-    left: 20,
-    right: 20,
-    bottom: 20,
+    position: 'absolute',
+    top: FRAME,
+    left: FRAME,
+    right: FRAME,
+    bottom: FRAME,
     border: 1,
-    borderColor: "#e2e8f0",
-    borderStyle: "solid",
+    borderColor: '#e2e8f0',
+    borderStyle: 'solid',
     padding: 10,
   },
   innerFrame: {
     flex: 1,
     border: 1,
-    borderColor: "#cbd5e1",
-    borderStyle: "solid",
+    borderColor: '#cbd5e1',
+    borderStyle: 'solid',
   },
   cornerMark: {
-    position: "absolute",
+    position: 'absolute',
     width: 22,
     height: 22,
-    borderColor: "#cbd5e1",
-    borderStyle: "solid",
+    borderColor: '#cbd5e1',
+    borderStyle: 'solid',
   },
   cornerTL: {
-    top: 32,
-    left: 32,
+    top: FRAME + 10,
+    left: FRAME + 10,
     borderTopWidth: 1.5,
     borderLeftWidth: 1.5,
     borderRightWidth: 0,
     borderBottomWidth: 0,
   },
   cornerTR: {
-    top: 32,
-    right: 32,
+    top: FRAME + 10,
+    right: FRAME + 10,
     borderTopWidth: 1.5,
     borderRightWidth: 1.5,
     borderLeftWidth: 0,
     borderBottomWidth: 0,
   },
   cornerBL: {
-    bottom: 32,
-    left: 32,
+    bottom: FRAME + 10,
+    left: FRAME + 10,
     borderBottomWidth: 1.5,
     borderLeftWidth: 1.5,
     borderRightWidth: 0,
     borderTopWidth: 0,
   },
   cornerBR: {
-    bottom: 32,
-    right: 32,
+    bottom: FRAME + 10,
+    right: FRAME + 10,
     borderBottomWidth: 1.5,
     borderRightWidth: 1.5,
     borderLeftWidth: 0,
     borderTopWidth: 0,
   },
   certId: {
-    position: "absolute",
-    top: 40,
-    right: 64,
-    alignItems: "flex-end",
+    position: 'absolute',
+    top: 36,
+    right: INNER_PAD,
+    alignItems: 'flex-end',
   },
   certIdLabel: {
-    fontSize: 8,
-    color: "#cbd5e1",
-    textTransform: "uppercase",
-    letterSpacing: 2.5,
+    fontSize: FONT.ID_LABEL,
+    color: '#cbd5e1',
+    textTransform: 'uppercase',
+    letterSpacing: TRACK.ID_LABEL,
     marginBottom: 2,
   },
   certIdValue: {
-    fontSize: 10,
-    fontFamily: "Courier",
-    fontWeight: "bold",
-    color: "#94a3b8",
+    fontSize: FONT.ID_VAL,
+    fontFamily: 'Courier',
+    fontWeight: 'bold',
+    color: '#94a3b8',
     letterSpacing: 1,
   },
-  contentContainer: {
-    position: "relative",
-    width: "100%",
-    height: "100%",
-    paddingTop: 72,
-    paddingLeft: 72,
-    paddingRight: 72,
+
+  // ===================== FLOW CONTENT =====================
+  flow: {
+    width: CONTENT_W,
+    marginLeft: INNER_PAD,
+    marginRight: INNER_PAD,
+    paddingTop: V_START,
+    paddingBottom: 20,
   },
   brand: {
-    fontSize: 14,
-    fontWeight: "bold",
-    textAlign: "center",
-    color: "#0f172a",
-    letterSpacing: 8,
-    textTransform: "uppercase",
+    fontSize: FONT.BRAND,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    color: '#0f172a',
+    letterSpacing: TRACK.BRAND,
+    textTransform: 'uppercase',
+    marginBottom: 2,
+  },
+  brandTag: {
+    fontSize: FONT.BRAND_TAG,
+    textAlign: 'center',
+    color: '#94a3b8',
+    letterSpacing: TRACK.BRAND_TAG,
+    textTransform: 'uppercase',
+    marginBottom: 6,
+  },
+  title: {
+    fontSize: FONT.TITLE,
+    fontWeight: 'light',
+    textAlign: 'center',
+    color: '#0f172a',
+    letterSpacing: TRACK.TITLE,
+    textTransform: 'uppercase',
+    lineHeight: 1,
     marginBottom: 4,
   },
-  brandTagline: {
-    fontSize: 8.5,
-    textAlign: "center",
-    color: "#94a3b8",
-    letterSpacing: 4,
-    textTransform: "uppercase",
-    marginBottom: 18,
-  },
-  certTitle: {
-    fontSize: 44,
-    fontWeight: "light",
-    textAlign: "center",
-    color: "#0f172a",
-    letterSpacing: 10,
-    textTransform: "uppercase",
+  subtitle: {
+    fontSize: FONT.SUBTITLE,
+    textAlign: 'center',
+    color: '#64748b',
+    letterSpacing: TRACK.SUBTITLE,
+    textTransform: 'uppercase',
     marginBottom: 8,
   },
-  certSubtitle: {
-    fontSize: 10,
-    textAlign: "center",
-    color: "#64748b",
-    letterSpacing: 10,
-    textTransform: "uppercase",
-    marginBottom: 10,
-  },
-  certDivider: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 12,
-    marginBottom: 22,
-  },
-  dividerShort: {
-    width: 40,
-    height: 1,
-    backgroundColor: "#cbd5e1",
-  },
-  dividerLong: {
-    width: 80,
-    height: 1,
-    backgroundColor: "#cbd5e1",
-  },
-  dividerDot: {
-    width: 4,
-    height: 4,
-    borderRadius: 2,
-    backgroundColor: "#94a3b8",
-  },
-  presentedTo: {
-    fontSize: 9.5,
-    textAlign: "center",
-    color: "#94a3b8",
-    textTransform: "uppercase",
-    letterSpacing: 5,
+  divider: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 10,
     marginBottom: 12,
   },
-  studentName: {
-    fontSize: 38,
-    fontWeight: "bold",
-    textAlign: "center",
-    color: "#1e293b",
-    letterSpacing: 1.5,
-    marginBottom: 4,
-    textTransform: "capitalize",
+  divS: { width: 36, height: 1, backgroundColor: '#cbd5e1' },
+  divL: { width: 70, height: 1, backgroundColor: '#cbd5e1' },
+  divDot: {
+    width: 3.5,
+    height: 3.5,
+    borderRadius: 2,
+    backgroundColor: '#94a3b8',
   },
-  nameUnderline: {
-    width: 420,
+  presented: {
+    fontSize: FONT.PRESENTED,
+    textAlign: 'center',
+    color: '#94a3b8',
+    textTransform: 'uppercase',
+    letterSpacing: TRACK.PRESENTED,
+    marginBottom: 10,
+  },
+  name: {
+    fontSize: FONT.NAME,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    color: '#1e293b',
+    letterSpacing: 1,
+    textTransform: 'capitalize',
+    lineHeight: 1.1,
+  },
+  nameWrap: {
+    height: FONT.NAME * 1.1 + 2,
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+  },
+  underline: {
+    width: 380,
     height: 1.5,
-    backgroundColor: "#94a3b8",
-    marginHorizontal: "auto",
-    marginBottom: 16,
+    backgroundColor: '#94a3b8',
+    marginTop: 6,
+    marginHorizontal: (CONTENT_W - 380) / 2,
   },
   collegeLabel: {
-    fontSize: 9,
-    textAlign: "center",
-    color: "#94a3b8",
-    textTransform: "uppercase",
-    letterSpacing: 3,
-    marginBottom: 4,
+    marginTop: 10,
+    fontSize: FONT.LABEL,
+    textAlign: 'center',
+    color: '#94a3b8',
+    textTransform: 'uppercase',
+    letterSpacing: TRACK.LABEL,
+    marginBottom: 3,
   },
   collegeValue: {
-    fontSize: 14,
-    fontWeight: "bold",
-    textAlign: "center",
-    color: "#334155",
-    marginBottom: 20,
+    fontSize: FONT.COLLEGE,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    color: '#334155',
     letterSpacing: 0.3,
+    marginBottom: 0,
   },
   description: {
-    fontSize: 11.5,
-    textAlign: "center",
-    color: "#475569",
-    lineHeight: 1.7,
-    marginBottom: 18,
+    marginTop: 10,
+    fontSize: FONT.DESC,
+    textAlign: 'center',
+    color: '#475569',
+    lineHeight: 1.5,
     paddingHorizontal: 40,
   },
-  topicBox: {
-    alignSelf: "center",
-    paddingHorizontal: 26,
-    paddingVertical: 10,
+  topicWrap: {
+    marginTop: 10,
+    alignSelf: 'center',
+    paddingHorizontal: 22,
+    paddingVertical: 7,
     border: 1,
-    borderColor: "#e2e8f0",
-    borderStyle: "solid",
+    borderColor: '#e2e8f0',
+    borderStyle: 'solid',
     borderRadius: 4,
-    backgroundColor: "#f8fafc",
-    marginBottom: 22,
+    backgroundColor: '#f8fafc',
   },
   topicLabel: {
-    fontSize: 9,
-    textAlign: "center",
-    color: "#94a3b8",
-    textTransform: "uppercase",
-    letterSpacing: 3,
-    marginBottom: 4,
+    fontSize: FONT.TOPIC_LABEL,
+    textAlign: 'center',
+    color: '#94a3b8',
+    textTransform: 'uppercase',
+    letterSpacing: TRACK.LABEL,
+    marginBottom: 3,
   },
-  topicName: {
-    fontSize: 20,
-    fontWeight: "bold",
-    textAlign: "center",
-    color: "#0f172a",
-    letterSpacing: 0.5,
+  topicValue: {
+    fontSize: FONT.TOPIC_VAL,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    color: '#0f172a',
+    letterSpacing: 0.3,
   },
-  detailsWrapper: {
-    flexDirection: "row",
-    justifyContent: "space-between",
+
+  // ===================== 2-COLUMN INFO GRID =====================
+  grid: {
+    marginTop: 14,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    width: CONTENT_W - 80,
+    marginHorizontal: 40,
+    border: 1,
+    borderColor: '#e2e8f0',
+    borderStyle: 'solid',
+    borderRadius: 4,
+    backgroundColor: '#fafafa',
+    paddingVertical: 12,
+    paddingHorizontal: 18,
+  },
+  gridRow: {
+    width: '50%',
+    marginBottom: 10,
+  },
+  gridRowBottom: {
+    width: '50%',
     marginBottom: 0,
-    paddingHorizontal: 24,
   },
-  detailBlock: {
-    alignItems: "flex-start",
+  gridLabel: {
+    fontSize: FONT.GRID_LABEL,
+    color: '#94a3b8',
+    textTransform: 'uppercase',
+    letterSpacing: TRACK.GRID_LABEL,
+    marginBottom: 3,
   },
-  detailLabel: {
-    fontSize: 8.5,
-    color: "#94a3b8",
-    textTransform: "uppercase",
-    letterSpacing: 2.5,
-    marginBottom: 4,
+  gridValue: {
+    fontSize: FONT.GRID_VAL,
+    fontWeight: 'bold',
+    color: '#334155',
+    letterSpacing: 0.2,
   },
-  detailValue: {
-    fontSize: 12,
-    fontWeight: "bold",
-    color: "#334155",
-    letterSpacing: 0.3,
+
+  // ===================== SIGNATURE SECTION (IN FLOW) =====================
+  sigRow: {
+    marginTop: 18,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: 20,
   },
-  signaturesSection: {
-    position: "absolute",
-    left: 72,
-    right: 72,
-    bottom: 78,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "flex-end",
+  sigBlock: {
+    width: CONTENT_W * 0.38,
   },
-  signatureBlock: {
-    alignItems: "center",
-    width: 200,
+  sigArea: {
+    height: 48,                 // compact signing space
+    width: '100%',
+    borderBottom: 1,
+    borderBottomColor: '#334155',
+    borderBottomStyle: 'solid',
   },
-  signatureLine: {
-    width: "100%",
-    height: 1,
-    backgroundColor: "#334155",
-    marginBottom: 8,
+  sigMeta: {
+    paddingTop: 6,
   },
-  signatoryName: {
-    fontWeight: "bold",
-    textAlign: "center",
-    color: "#1e293b",
-    fontSize: 12,
-    letterSpacing: 0.3,
+  sigName: {
+    fontSize: FONT.SIG_NAME,
+    fontWeight: 'bold',
+    color: '#1e293b',
+    letterSpacing: 0.2,
   },
-  signatoryTitle: {
-    fontSize: 8.5,
-    textAlign: "center",
-    color: "#94a3b8",
+  sigTitle: {
+    fontSize: FONT.SIG_TITLE,
+    color: '#94a3b8',
+    textTransform: 'uppercase',
+    letterSpacing: TRACK.SIG_TITLE,
     marginTop: 2,
-    textTransform: "uppercase",
-    letterSpacing: 2,
   },
-  footerBar: {
-    position: "absolute",
-    left: 0,
-    right: 0,
-    bottom: 40,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 18,
+
+  // ===================== FOOTER (IN FLOW) =====================
+  footer: {
+    marginTop: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 16,
   },
-  footerOrnament: {
-    width: 100,
+  footerLine: {
+    width: 80,
     height: 1,
-    backgroundColor: "#e2e8f0",
+    backgroundColor: '#e2e8f0',
   },
   footerText: {
-    fontSize: 8,
-    color: "#cbd5e1",
-    letterSpacing: 3,
-    textTransform: "uppercase",
+    fontSize: FONT.FOOTER,
+    color: '#cbd5e1',
+    letterSpacing: TRACK.FOOTER,
+    textTransform: 'uppercase',
   },
 });
 
-interface CertificatePDFProps {
+interface Props {
   studentName: string;
   collegeName: string;
   registrationNo: string;
@@ -319,9 +376,10 @@ interface CertificatePDFProps {
   issueDate: string;
 }
 
-const padId = (n: string) => n.padStart(8, "0").slice(-8);
+// Preserve the full registration number – do not truncate
+const padId = (n: string) => n.padStart(8, '0');
 
-const CertificatePDF: React.FC<CertificatePDFProps> = ({
+const CertificatePDF: React.FC<Props> = ({
   studentName,
   collegeName,
   registrationNo,
@@ -332,90 +390,102 @@ const CertificatePDF: React.FC<CertificatePDFProps> = ({
 }) => (
   <Document>
     <Page size="A4" orientation="landscape" style={styles.page}>
+      {/* ---- decorative frame ---- */}
       <View style={styles.outerFrame}>
         <View style={styles.innerFrame} />
       </View>
-
       <View style={[styles.cornerMark, styles.cornerTL]} />
       <View style={[styles.cornerMark, styles.cornerTR]} />
       <View style={[styles.cornerMark, styles.cornerBL]} />
       <View style={[styles.cornerMark, styles.cornerBR]} />
 
+      {/* ---- cert id ---- */}
       <View style={styles.certId}>
         <Text style={styles.certIdLabel}>Certificate ID</Text>
         <Text style={styles.certIdValue}>KDF-{padId(registrationNo)}</Text>
       </View>
 
-      <View style={styles.contentContainer}>
+      {/* ===================== MAIN FLOW (everything in document order) ===================== */}
+      <View style={styles.flow} wrap={false}>
         <Text style={styles.brand}>Kodefort</Text>
-        <Text style={styles.brandTagline}>Software · Cybersecurity · Excellence</Text>
+        <Text style={styles.brandTag}>Software · Cybersecurity · Excellence</Text>
 
-        <Text style={styles.certTitle}>Certificate</Text>
-        <Text style={styles.certSubtitle}>Of Completion</Text>
+        <Text style={styles.title}>Certificate</Text>
+        <Text style={styles.subtitle}>Of Completion</Text>
 
-        <View style={styles.certDivider}>
-          <View style={styles.dividerShort} />
-          <View style={styles.dividerDot} />
-          <View style={styles.dividerLong} />
-          <View style={styles.dividerDot} />
-          <View style={styles.dividerShort} />
+        <View style={styles.divider}>
+          <View style={styles.divS} />
+          <View style={styles.divDot} />
+          <View style={styles.divL} />
+          <View style={styles.divDot} />
+          <View style={styles.divS} />
         </View>
 
-        <Text style={styles.presentedTo}>This Certificate Is Proudly Presented To</Text>
-        <Text style={styles.studentName}>{studentName}</Text>
-        <View style={styles.nameUnderline} />
+        <Text style={styles.presented}>This Certificate Is Proudly Presented To</Text>
+
+        <View style={styles.nameWrap}>
+          <Text style={styles.name}>{studentName}</Text>
+        </View>
+        <View style={styles.underline} />
 
         <Text style={styles.collegeLabel}>Affiliated College / University</Text>
         <Text style={styles.collegeValue}>{collegeName}</Text>
 
         <Text style={styles.description}>
-          In recognition of the successful completion of the structured Internship Program in
-          the area of study listed below, demonstrating diligence and mastery of core concepts.
+          In recognition of the successful completion of the structured Internship Program,
+          demonstrating diligence, mastery of core concepts, and commitment to professional growth.
         </Text>
 
-        <View style={styles.topicBox}>
+        <View style={styles.topicWrap}>
           <Text style={styles.topicLabel}>Internship Discipline</Text>
-          <Text style={styles.topicName}>{internshipTopic}</Text>
+          <Text style={styles.topicValue}>{internshipTopic}</Text>
         </View>
 
-        <View style={styles.detailsWrapper}>
-          <View style={styles.detailBlock}>
-            <Text style={styles.detailLabel}>Registration No.</Text>
-            <Text style={styles.detailValue}>{registrationNo}</Text>
+        {/* ---- 2-COLUMN INFO GRID ---- */}
+        <View style={styles.grid}>
+          <View style={styles.gridRow}>
+            <Text style={styles.gridLabel}>Registration No.</Text>
+            <Text style={styles.gridValue}>{registrationNo}</Text>
           </View>
-          <View style={styles.detailBlock}>
-            <Text style={styles.detailLabel}>Degree Pursued</Text>
-            <Text style={styles.detailValue}>{degree}</Text>
+          <View style={styles.gridRow}>
+            <Text style={styles.gridLabel}>Degree Pursued</Text>
+            <Text style={styles.gridValue}>{degree}</Text>
           </View>
-          <View style={styles.detailBlock}>
-            <Text style={styles.detailLabel}>Academic Session</Text>
-            <Text style={styles.detailValue}>{session}</Text>
+          <View style={styles.gridRowBottom}>
+            <Text style={styles.gridLabel}>Academic Session</Text>
+            <Text style={styles.gridValue}>{session}</Text>
           </View>
-          <View style={styles.detailBlock}>
-            <Text style={styles.detailLabel}>Date Issued</Text>
-            <Text style={styles.detailValue}>{issueDate}</Text>
+          <View style={styles.gridRowBottom}>
+            <Text style={styles.gridLabel}>Date Issued</Text>
+            <Text style={styles.gridValue}>{issueDate}</Text>
           </View>
         </View>
-      </View>
 
-      <View style={styles.signaturesSection}>
-        <View style={styles.signatureBlock}>
-          <View style={styles.signatureLine} />
-          <Text style={styles.signatoryName}>Program Coordinator</Text>
-          <Text style={styles.signatoryTitle}>Internship Division · Kodefort</Text>
+        {/* ---- SIGNATURE ROW (now in normal flow) ---- */}
+        <View style={styles.sigRow}>
+          <View style={styles.sigBlock}>
+            <View style={styles.sigArea} />
+            <View style={styles.sigMeta}>
+              <Text style={styles.sigName}>Program Coordinator</Text>
+              <Text style={styles.sigTitle}>Internship Division · Kodefort</Text>
+            </View>
+          </View>
+
+          <View style={styles.sigBlock}>
+            <View style={styles.sigArea} />
+            <View style={styles.sigMeta}>
+              <Text style={styles.sigName}>Kundan Kumar</Text>
+              <Text style={styles.sigTitle}>Director · Kodefort</Text>
+            </View>
+          </View>
         </View>
 
-        <View style={styles.signatureBlock}>
-          <View style={styles.signatureLine} />
-          <Text style={styles.signatoryName}>Kundan Kumar</Text>
-          <Text style={styles.signatoryTitle}>Director · Kodefort</Text>
+        {/* ---- FOOTER (now in normal flow) ---- */}
+        <View style={styles.footer}>
+          <View style={styles.footerLine} />
+          <Text style={styles.footerText}>Awarded by Kodefort · Valid for Official Use</Text>
+          <View style={styles.footerLine} />
         </View>
-      </View>
-
-      <View style={styles.footerBar}>
-        <View style={styles.footerOrnament} />
-        <Text style={styles.footerText}>Awarded by Kodefort · Valid for Official Use</Text>
-        <View style={styles.footerOrnament} />
       </View>
     </Page>
   </Document>
