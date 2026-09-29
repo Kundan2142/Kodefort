@@ -53,7 +53,7 @@ const TRACK = {
 const styles = StyleSheet.create({
   page: {
     fontFamily: 'Helvetica',
-    backgroundColor: '#ffffff',
+    backgroundColor: '#FFFEFC',
     padding: 0,
     lineHeight: 1.2,
     position: 'relative',
@@ -65,21 +65,21 @@ const styles = StyleSheet.create({
     right: FRAME,
     bottom: FRAME,
     border: 1,
-    borderColor: '#e2e8f0',
+    borderColor: '#E8E1D5',
     borderStyle: 'solid',
     padding: 10,
   },
   innerFrame: {
     flex: 1,
     border: 1,
-    borderColor: '#cbd5e1',
+    borderColor: '#D8C8A8',
     borderStyle: 'solid',
   },
   cornerMark: {
     position: 'absolute',
     width: 22,
     height: 22,
-    borderColor: '#cbd5e1',
+    borderColor: '#D8C8A8',
     borderStyle: 'solid',
   },
   cornerTL: {
@@ -122,7 +122,7 @@ const styles = StyleSheet.create({
   },
   certIdLabel: {
     fontSize: FONT.ID_LABEL,
-    color: '#cbd5e1',
+    color: '#D8C8A8',
     textTransform: 'uppercase',
     letterSpacing: TRACK.ID_LABEL,
     marginBottom: 2,
@@ -131,7 +131,7 @@ const styles = StyleSheet.create({
     fontSize: FONT.ID_VAL,
     fontFamily: 'Courier',
     fontWeight: 'bold',
-    color: '#94a3b8',
+    color: '#82939B',
     letterSpacing: 1,
   },
 
@@ -147,7 +147,7 @@ const styles = StyleSheet.create({
     fontSize: FONT.BRAND,
     fontWeight: 'bold',
     textAlign: 'center',
-    color: '#0f172a',
+    color: '#173B4A',
     letterSpacing: TRACK.BRAND,
     textTransform: 'uppercase',
     marginBottom: 2,
@@ -155,7 +155,7 @@ const styles = StyleSheet.create({
   brandTag: {
     fontSize: FONT.BRAND_TAG,
     textAlign: 'center',
-    color: '#94a3b8',
+    color: '#82939B',
     letterSpacing: TRACK.BRAND_TAG,
     textTransform: 'uppercase',
     marginBottom: 6,
@@ -164,19 +164,20 @@ const styles = StyleSheet.create({
     fontSize: FONT.TITLE,
     fontWeight: 'light',
     textAlign: 'center',
-    color: '#0f172a',
+    color: '#173B4A',
     letterSpacing: TRACK.TITLE,
     textTransform: 'uppercase',
-    lineHeight: 1,
-    marginBottom: 4,
+    // Give the large heading enough vertical room so the subtitle cannot overlap it.
+    lineHeight: 1.2,
+    marginBottom: 8,
   },
   subtitle: {
     fontSize: FONT.SUBTITLE,
     textAlign: 'center',
-    color: '#64748b',
+    color: '#607781',
     letterSpacing: TRACK.SUBTITLE,
     textTransform: 'uppercase',
-    marginBottom: 8,
+    marginBottom: 10,
   },
   divider: {
     flexDirection: 'row',
@@ -185,18 +186,18 @@ const styles = StyleSheet.create({
     gap: 10,
     marginBottom: 12,
   },
-  divS: { width: 36, height: 1, backgroundColor: '#cbd5e1' },
-  divL: { width: 70, height: 1, backgroundColor: '#cbd5e1' },
+  divS: { width: 36, height: 1, backgroundColor: '#D8C8A8' },
+  divL: { width: 70, height: 1, backgroundColor: '#D8C8A8' },
   divDot: {
     width: 3.5,
     height: 3.5,
     borderRadius: 2,
-    backgroundColor: '#94a3b8',
+    backgroundColor: '#B89A5A',
   },
   presented: {
     fontSize: FONT.PRESENTED,
     textAlign: 'center',
-    color: '#94a3b8',
+    color: '#82939B',
     textTransform: 'uppercase',
     letterSpacing: TRACK.PRESENTED,
     marginBottom: 10,
@@ -205,7 +206,7 @@ const styles = StyleSheet.create({
     fontSize: FONT.NAME,
     fontWeight: 'bold',
     textAlign: 'center',
-    color: '#1e293b',
+    color: '#173B4A',
     letterSpacing: 1,
     textTransform: 'capitalize',
     lineHeight: 1.1,
@@ -218,7 +219,7 @@ const styles = StyleSheet.create({
   underline: {
     width: 380,
     height: 1.5,
-    backgroundColor: '#94a3b8',
+    backgroundColor: '#B89A5A',
     marginTop: 6,
     marginHorizontal: (CONTENT_W - 380) / 2,
   },
@@ -226,7 +227,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     fontSize: FONT.LABEL,
     textAlign: 'center',
-    color: '#94a3b8',
+    color: '#82939B',
     textTransform: 'uppercase',
     letterSpacing: TRACK.LABEL,
     marginBottom: 3,
@@ -235,7 +236,7 @@ const styles = StyleSheet.create({
     fontSize: FONT.COLLEGE,
     fontWeight: 'bold',
     textAlign: 'center',
-    color: '#334155',
+    color: '#35515C',
     letterSpacing: 0.3,
     marginBottom: 0,
   },
@@ -243,7 +244,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     fontSize: FONT.DESC,
     textAlign: 'center',
-    color: '#475569',
+    color: '#52666E',
     lineHeight: 1.5,
     paddingHorizontal: 40,
   },
@@ -253,15 +254,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: 22,
     paddingVertical: 7,
     border: 1,
-    borderColor: '#e2e8f0',
+    borderColor: '#E8E1D5',
     borderStyle: 'solid',
     borderRadius: 4,
-    backgroundColor: '#f8fafc',
+    backgroundColor: '#F4F8F8',
   },
   topicLabel: {
     fontSize: FONT.TOPIC_LABEL,
     textAlign: 'center',
-    color: '#94a3b8',
+    color: '#82939B',
     textTransform: 'uppercase',
     letterSpacing: TRACK.LABEL,
     marginBottom: 3,
@@ -270,36 +271,42 @@ const styles = StyleSheet.create({
     fontSize: FONT.TOPIC_VAL,
     fontWeight: 'bold',
     textAlign: 'center',
-    color: '#0f172a',
+    color: '#173B4A',
     letterSpacing: 0.3,
   },
 
   // ===================== 2-COLUMN INFO GRID =====================
   grid: {
     marginTop: 14,
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+    flexDirection: 'column',
     width: CONTENT_W - 80,
     marginHorizontal: 40,
     border: 1,
-    borderColor: '#e2e8f0',
+    borderColor: '#E8E1D5',
     borderStyle: 'solid',
     borderRadius: 4,
-    backgroundColor: '#fafafa',
+    backgroundColor: '#FBF9F4',
     paddingVertical: 12,
     paddingHorizontal: 18,
   },
+  // Each grid row explicitly contains two side-by-side cells. This keeps all
+  // values inside the shaded box instead of relying on flex-wrap calculations.
   gridRow: {
-    width: '50%',
-    marginBottom: 10,
+    width: '100%',
+    flexDirection: 'row',
+    marginBottom: 12,
   },
   gridRowBottom: {
+    width: '100%',
+    flexDirection: 'row',
+  },
+  gridCell: {
     width: '50%',
-    marginBottom: 0,
+    minWidth: 0,
   },
   gridLabel: {
     fontSize: FONT.GRID_LABEL,
-    color: '#94a3b8',
+    color: '#82939B',
     textTransform: 'uppercase',
     letterSpacing: TRACK.GRID_LABEL,
     marginBottom: 3,
@@ -307,7 +314,7 @@ const styles = StyleSheet.create({
   gridValue: {
     fontSize: FONT.GRID_VAL,
     fontWeight: 'bold',
-    color: '#334155',
+    color: '#35515C',
     letterSpacing: 0.2,
   },
 
@@ -324,8 +331,8 @@ const styles = StyleSheet.create({
   sigArea: {
     height: 48,                 // compact signing space
     width: '100%',
-    borderBottom: 1,
-    borderBottomColor: '#334155',
+    borderBottomWidth: 1,
+    borderBottomColor: '#AABBC0',
     borderBottomStyle: 'solid',
   },
   sigMeta: {
@@ -334,12 +341,12 @@ const styles = StyleSheet.create({
   sigName: {
     fontSize: FONT.SIG_NAME,
     fontWeight: 'bold',
-    color: '#1e293b',
+    color: '#173B4A',
     letterSpacing: 0.2,
   },
   sigTitle: {
     fontSize: FONT.SIG_TITLE,
-    color: '#94a3b8',
+    color: '#82939B',
     textTransform: 'uppercase',
     letterSpacing: TRACK.SIG_TITLE,
     marginTop: 2,
@@ -360,7 +367,7 @@ const styles = StyleSheet.create({
   },
   footerText: {
     fontSize: FONT.FOOTER,
-    color: '#cbd5e1',
+    color: '#D8C8A8',
     letterSpacing: TRACK.FOOTER,
     textTransform: 'uppercase',
   },
@@ -444,20 +451,24 @@ const CertificatePDF: React.FC<Props> = ({
         {/* ---- 2-COLUMN INFO GRID ---- */}
         <View style={styles.grid}>
           <View style={styles.gridRow}>
-            <Text style={styles.gridLabel}>Registration No.</Text>
-            <Text style={styles.gridValue}>{registrationNo}</Text>
-          </View>
-          <View style={styles.gridRow}>
-            <Text style={styles.gridLabel}>Degree Pursued</Text>
-            <Text style={styles.gridValue}>{degree}</Text>
-          </View>
-          <View style={styles.gridRowBottom}>
-            <Text style={styles.gridLabel}>Academic Session</Text>
-            <Text style={styles.gridValue}>{session}</Text>
+            <View style={styles.gridCell}>
+              <Text style={styles.gridLabel}>Registration No.</Text>
+              <Text style={styles.gridValue}>{registrationNo}</Text>
+            </View>
+            <View style={styles.gridCell}>
+              <Text style={styles.gridLabel}>Degree Pursued</Text>
+              <Text style={styles.gridValue}>{degree}</Text>
+            </View>
           </View>
           <View style={styles.gridRowBottom}>
-            <Text style={styles.gridLabel}>Date Issued</Text>
-            <Text style={styles.gridValue}>{issueDate}</Text>
+            <View style={styles.gridCell}>
+              <Text style={styles.gridLabel}>Academic Session</Text>
+              <Text style={styles.gridValue}>{session}</Text>
+            </View>
+            <View style={styles.gridCell}>
+              <Text style={styles.gridLabel}>Date Issued</Text>
+              <Text style={styles.gridValue}>{issueDate}</Text>
+            </View>
           </View>
         </View>
 
