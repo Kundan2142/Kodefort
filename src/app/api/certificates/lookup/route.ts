@@ -3,6 +3,7 @@ import * as XLSX from "xlsx";
 import * as path from "path";
 import { fileURLToPath } from "url";
 import { promises as fsPromises, existsSync } from "fs";
+import prisma from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
 
@@ -112,9 +113,62 @@ export async function POST(request: Request) {
       address: String(student["ADDRESS ( VILL, POST, PS, DIST, STATE, PINCODE)"] || "N/A").trim(),
     };
 
+    let approval: any = null;
+    try {
+      const approvals = await prisma.certificateApproval.findMany({
+        where: { registrationNo: studentData.registrationNo },
+        orderBy: [{ updatedAt: "desc" }],
+        take: 5,
+      });
+
+      if (approvals.length === 0) {
+        approval = {
+          status: "pending",
+          registrationNo: studentData.registrationNo,
+          internshipTopic: studentData.internshipTopic,
+          remarks: null,
+          approvedAt: null,
+          firstTime: true,
+        };
+      } else {
+        const specific = approvals.find(
+          (a) => a.internshipTopic === studentData.internshipTopic
+        );
+        approval = specific || approvals[0];
+      }
+    } catch (dbErr) {
+      console.warn(
+        "[certificates lookup] prisma unavailable, defaulting approval status:",
+        (dbErr as Error).message
+      );
+      approval = {
+        status: "pending",
+        registrationNo: studentData.registrationNo,
+        internshipTopic: studentData.internshipTopic,
+        remarks: null,
+        approvedAt: null,
+      };
+    }
+
     return NextResponse.json({
       success: true,
       student: studentData,
+      approval: {
+        status: approval?.status || "pending",
+        remarks: approval?.remarks || null,
+        approvedAt: approval?.approvedAt || null,
+        approvedBy: approval?.approvedBy || null,
+        internshipTopic: approval?.internshipTopic || studentData.internshipTopic,
+        updatedAt: approval?.updatedAt || null,
+      },
+      documents: {
+        offerLetter: { available: true, requiresApproval: false },
+        completionCertificate: {
+          available: (approval?.status || "pending") === "approved",
+          requiresApproval: true,
+          status: approval?.status || "pending",
+        },
+      },
     });
   } catch (error) {
     console.error("Error looking up certificate:", error);

@@ -68,6 +68,7 @@ export default function Navbar() {
               alt="Kodefort"
               width={36}
               height={36}
+              style={{ height: "auto" }}
             />
             <span className="text-base sm:text-lg font-semibold tracking-tight text-slate-900">
               Kodefort

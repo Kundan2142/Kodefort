@@ -426,7 +426,7 @@ const CertificatePDF: React.FC<Props> = ({
 
       {/* ---- brand logo (upper-left, symmetric to cert id) ---- */}
       <View style={styles.brandLogo}>
-        <Image src="/logo.png" style={styles.logoImg} alt="" />
+        <Image src="/logo.png" style={styles.logoImg} />
       </View>
 
       {/* ===================== MAIN FLOW (everything in document order) ===================== */}

@@ -397,6 +397,7 @@ function DashboardContent() {
               width={36} 
               height={36} 
               className="rounded-lg relative z-10"
+              style={{ height: "auto" }}
             />
             <div className="relative z-10">
               <h2 className="text-[36px] font-bold text-white tracking-tight" style={{ fontFamily: 'Creato Display, Outfit, sans-serif' }}>Payment Successful!</h2>

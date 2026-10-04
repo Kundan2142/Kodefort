@@ -421,7 +421,7 @@ const OfferLetterPDF: React.FC<Props> = ({
           {/* Header */}
           <View style={styles.header}>
             <View style={styles.logoWrap}>
-              <Image src="/logo.png" style={styles.logoImg} alt="" />
+              <Image src="/logo.png" style={styles.logoImg} />
             </View>
             <View style={styles.hdrText}>
               <Text style={styles.hdrName}>{COMPANY.name}</Text>
@@ -578,7 +578,7 @@ const OfferLetterPDF: React.FC<Props> = ({
             <View style={styles.sigRCol}>
               <Text style={styles.regards}>With best regards,</Text>
               <View style={styles.sigImgWrap}>
-                <Image src="/sign.jpeg" style={styles.sigImg} alt="" />
+                <Image src="/sign.jpeg" style={styles.sigImg} />
               </View>
               <View style={styles.sigLine} />
               <Text style={styles.sigName}>{COMPANY.signatory}</Text>

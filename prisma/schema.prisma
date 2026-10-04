@@ -22,6 +22,17 @@ model Feedback {
   createdAt DateTime @default(now())
 }
 
+model Admin {
+  id           Int       @id @default(autoincrement())
+  email        String    @unique
+  passwordHash String
+  name         String
+  role         String    @default("super_admin")
+  createdAt    DateTime  @default(now())
+
+  approvals    CertificateApproval[]
+}
+
 model Student {
   id           Int          @id @default(autoincrement())
   name         String
@@ -35,6 +46,7 @@ model Student {
   subject      String?
   internshipType String    @default("Hybrid (Online)")
   enrollments  Enrollment[]
+  approvals    CertificateApproval[]
   createdAt    DateTime     @default(now())
 }
 
@@ -62,6 +74,32 @@ model Enrollment {
   createdAt    DateTime          @default(now())
 
   @@unique([studentId, internshipId])
+}
+
+model CertificateApproval {
+  id               Int       @id @default(autoincrement())
+  registrationNo   String
+  studentName      String
+  collegeName    String
+  internshipTopic  String    @default("Web Development")
+  status           String    @default("pending") // pending | approved | rejected
+  degree           String?
+  session          String?
+  subject          String?
+  email            String?
+  mobileNo         String?
+  address          String?
+  approvedBy       Int?
+  approvedAt         DateTime?
+  remarks          String?
+  admin            Admin?    @relation(fields: [approvedBy], references: [id])
+  student          Student?  @relation(fields: [registrationNo], references: [registrationNo], onDelete: Cascade)
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  @@unique([registrationNo, internshipTopic])
+  @@index([status])
+  @@index([registrationNo])
 }
 
 model CompletedTask {
