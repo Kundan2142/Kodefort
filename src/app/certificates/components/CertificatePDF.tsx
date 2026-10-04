@@ -5,6 +5,7 @@ import {
   Text,
   View,
   StyleSheet,
+  Image,
 } from '@react-pdf/renderer';
 
 // ---- LAYOUT CONSTANTS (A4 LANDSCAPE: 842 x 595 pt) ----
@@ -133,6 +134,17 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#82939B',
     letterSpacing: 1,
+  },
+  brandLogo: {
+    position: 'absolute',
+    top: 32,
+    left: INNER_PAD,
+    width: 46,
+    height: 46,
+  },
+  logoImg: {
+    width: 46,
+    height: 46,
   },
 
   // ===================== FLOW CONTENT =====================
@@ -410,6 +422,11 @@ const CertificatePDF: React.FC<Props> = ({
       <View style={styles.certId}>
         <Text style={styles.certIdLabel}>Certificate ID</Text>
         <Text style={styles.certIdValue}>KDF-{padId(registrationNo)}</Text>
+      </View>
+
+      {/* ---- brand logo (upper-left, symmetric to cert id) ---- */}
+      <View style={styles.brandLogo}>
+        <Image src="/logo.png" style={styles.logoImg} alt="" />
       </View>
 
       {/* ===================== MAIN FLOW (everything in document order) ===================== */}
