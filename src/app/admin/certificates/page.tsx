@@ -184,6 +184,7 @@ export default function AdminApprovalsPage() {
   const rejectedCount = items.filter((i) => i.status === "rejected").length;
 
   if (!ready) return null;
+  if (!auth) return null;
 
   // ===== Admin Dashboard =====
   return (

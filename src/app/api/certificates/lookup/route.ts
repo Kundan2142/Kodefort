@@ -20,7 +20,10 @@ function resolveExcelPath(): string {
   try {
     if (process.cwd()) {
       candidates.push(
-        path.join(process.cwd(), "Internship Form Kodefort  (Responses).xlsx")
+        path.join(process.cwd(), "data", "Internship Form Kodefort  (Responses).xlsx")
+      );
+      candidates.push(
+        path.join(/*turbopackIgnore: true*/ process.cwd(), "Internship Form Kodefort  (Responses).xlsx")
       );
     }
   } catch (e) {
@@ -31,10 +34,10 @@ function resolveExcelPath(): string {
     const __filename = fileURLToPath(import.meta.url);
     const __dirname = path.dirname(__filename);
     candidates.push(
-      path.resolve(__dirname, "..", "..", "..", "..", "..", "Internship Form Kodefort  (Responses).xlsx")
+      path.resolve(__dirname, "..", "..", "..", "..", "..", "data", "Internship Form Kodefort  (Responses).xlsx")
     );
     candidates.push(
-      path.resolve(__dirname, "..", "..", "..", "Internship Form Kodefort  (Responses).xlsx")
+      path.resolve(/*turbopackIgnore: true*/ __dirname, "..", "..", "..", "Internship Form Kodefort  (Responses).xlsx")
     );
   } catch (e) {
     // ignore

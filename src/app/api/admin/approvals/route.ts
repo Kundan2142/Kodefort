@@ -15,6 +15,13 @@ function resolveExcelPath(): string {
       candidates.push(
         path.join(
           process.cwd(),
+          "data",
+          "Internship Form Kodefort  (Responses).xlsx"
+        )
+      );
+      candidates.push(
+        path.join(
+          /*turbopackIgnore: true*/ process.cwd(),
           "Internship Form Kodefort  (Responses).xlsx"
         )
       );
@@ -33,12 +40,13 @@ function resolveExcelPath(): string {
         "..",
         "..",
         "..",
+        "data",
         "Internship Form Kodefort  (Responses).xlsx"
       )
     );
     candidates.push(
       path.resolve(
-        __dirname,
+        /*turbopackIgnore: true*/ __dirname,
         "..",
         "..",
         "..",
