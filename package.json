@@ -7,7 +7,8 @@
     "start": "next start",
     "lint": "eslint",
     "postinstall": "prisma generate",
-    "build": "prisma generate && prisma migrate deploy && next build"
+    "resolve-migrations": "prisma migrate resolve --rolled-back 20261004_add_admin_and_missing_tables || node -e 0",
+    "build": "prisma generate && npm run resolve-migrations && prisma migrate deploy && next build"
   },
   "dependencies": {
     "@prisma/client": "^6.19.3",

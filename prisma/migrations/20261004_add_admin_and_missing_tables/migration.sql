@@ -3,6 +3,8 @@ BEGIN
     IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'Student' AND column_name = 'degree') THEN
         ALTER TABLE "Student" ADD COLUMN "degree" TEXT;
     END IF;
+EXCEPTION WHEN OTHERS THEN
+    RAISE NOTICE 'Student.degree skipped: %', SQLERRM;
 END $$;
 
 DO $$
@@ -10,6 +12,8 @@ BEGIN
     IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'Student' AND column_name = 'subject') THEN
         ALTER TABLE "Student" ADD COLUMN "subject" TEXT;
     END IF;
+EXCEPTION WHEN OTHERS THEN
+    RAISE NOTICE 'Student.subject skipped: %', SQLERRM;
 END $$;
 
 DO $$
@@ -17,6 +21,8 @@ BEGIN
     IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'Payment' AND column_name = 'orderId') THEN
         ALTER TABLE "Payment" ADD COLUMN "orderId" TEXT;
     END IF;
+EXCEPTION WHEN OTHERS THEN
+    RAISE NOTICE 'Payment.orderId skipped: %', SQLERRM;
 END $$;
 
 DO $$
@@ -24,6 +30,8 @@ BEGIN
     IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'Payment' AND column_name = 'paymentId') THEN
         ALTER TABLE "Payment" ADD COLUMN "paymentId" TEXT;
     END IF;
+EXCEPTION WHEN OTHERS THEN
+    RAISE NOTICE 'Payment.paymentId skipped: %', SQLERRM;
 END $$;
 
 DO $$
@@ -31,6 +39,8 @@ BEGIN
     IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'Payment' AND column_name = 'receiptNo') THEN
         ALTER TABLE "Payment" ADD COLUMN "receiptNo" TEXT;
     END IF;
+EXCEPTION WHEN OTHERS THEN
+    RAISE NOTICE 'Payment.receiptNo skipped: %', SQLERRM;
 END $$;
 
 CREATE UNIQUE INDEX IF NOT EXISTS "Payment_receiptNo_key" ON "Payment"("receiptNo");
@@ -60,6 +70,8 @@ BEGIN
     IF NOT EXISTS (SELECT 1 FROM information_schema.table_constraints WHERE constraint_name = 'CompletedTask_enrollmentId_fkey') THEN
         ALTER TABLE "CompletedTask" ADD CONSTRAINT "CompletedTask_enrollmentId_fkey" FOREIGN KEY ("enrollmentId") REFERENCES "Enrollment"("id") ON DELETE CASCADE ON UPDATE CASCADE;
     END IF;
+EXCEPTION WHEN OTHERS THEN
+    RAISE NOTICE 'CompletedTask_enrollmentId_fkey skipped: %', SQLERRM;
 END $$;
 
 DO $$
@@ -67,6 +79,8 @@ BEGIN
     IF NOT EXISTS (SELECT 1 FROM information_schema.table_constraints WHERE constraint_name = 'CompletedTask_taskId_fkey') THEN
         ALTER TABLE "CompletedTask" ADD CONSTRAINT "CompletedTask_taskId_fkey" FOREIGN KEY ("taskId") REFERENCES "Task"("id") ON DELETE CASCADE ON UPDATE CASCADE;
     END IF;
+EXCEPTION WHEN OTHERS THEN
+    RAISE NOTICE 'CompletedTask_taskId_fkey skipped: %', SQLERRM;
 END $$;
 
 CREATE TABLE IF NOT EXISTS "CertificateApproval" (
@@ -98,6 +112,8 @@ BEGIN
     IF NOT EXISTS (SELECT 1 FROM information_schema.table_constraints WHERE constraint_name = 'CertificateApproval_approvedBy_fkey') THEN
         ALTER TABLE "CertificateApproval" ADD CONSTRAINT "CertificateApproval_approvedBy_fkey" FOREIGN KEY ("approvedBy") REFERENCES "Admin"("id") ON DELETE SET NULL ON UPDATE CASCADE;
     END IF;
+EXCEPTION WHEN OTHERS THEN
+    RAISE NOTICE 'CertificateApproval_approvedBy_fkey skipped: %', SQLERRM;
 END $$;
 
 DO $$
@@ -105,4 +121,6 @@ BEGIN
     IF NOT EXISTS (SELECT 1 FROM information_schema.table_constraints WHERE constraint_name = 'CertificateApproval_registrationNo_fkey') THEN
         ALTER TABLE "CertificateApproval" ADD CONSTRAINT "CertificateApproval_registrationNo_fkey" FOREIGN KEY ("registrationNo") REFERENCES "Student"("registrationNo") ON DELETE CASCADE ON UPDATE CASCADE;
     END IF;
+EXCEPTION WHEN OTHERS THEN
+    RAISE NOTICE 'CertificateApproval_registrationNo_fkey skipped: %', SQLERRM;
 END $$;
