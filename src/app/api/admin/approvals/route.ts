@@ -139,11 +139,20 @@ export async function PATCH(request: NextRequest) {
       );
     }
 
+    const norm = (v: any) => String(v || "").trim().replace(/\s+/g, "");
+
     let where: any = {};
     if (id) where.id = Number(id);
     else if (registrationNo) {
-      where.registrationNo = String(registrationNo).trim();
-      if (internshipTopic) where.internshipTopic = String(internshipTopic);
+      const nReg = norm(registrationNo);
+      where.OR = [
+        { registrationNo: nReg },
+        { registrationNo: String(registrationNo).trim() },
+      ];
+      if (internshipTopic) {
+        const nTopic = String(internshipTopic).trim();
+        where.internshipTopic = nTopic;
+      }
     } else {
       return NextResponse.json(
         { error: "Provide id or registrationNo" },

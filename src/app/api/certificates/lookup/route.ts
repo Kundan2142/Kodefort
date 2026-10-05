@@ -103,14 +103,21 @@ export async function POST(request: Request) {
       );
     }
 
+    const norm = (v: any) => String(v || "").trim().replace(/\s+/g, "");
+    const normTopic = (v: any) => String(v || "").trim().replace(/\s+/g, " ").toLowerCase();
+
+    const excelRegNo = norm(student["REGISTRATION NO"]);
+    const excelTopicRaw = String(student["INTERNSHIP TOPICS"] || "Web Development").trim();
+    const excelTopicNorm = normTopic(excelTopicRaw);
+
     const studentData = {
       studentName: String(student["STUDENT NAME"] || "N/A").trim(),
       collegeName: String(student["COLLEGE NAME"] || "N/A").trim(),
-      registrationNo: String(student["REGISTRATION NO"] || "N/A").trim(),
+      registrationNo: excelRegNo,
       degree: String(student["DEGREE"] || "N/A").trim(),
       session: String(student["SESSION"] || "N/A").trim(),
       subject: String(student["SUBJECT"] || "N/A").trim(),
-      internshipTopic: String(student["INTERNSHIP TOPICS"] || "N/A").trim(),
+      internshipTopic: excelTopicRaw,
       email: String(student["Email Address"] || "N/A").trim(),
       mobileNo: String(student["MOBILE NO ( WHATS NUMBER ALSO)"] || "N/A").trim(),
       address: String(student["ADDRESS ( VILL, POST, PS, DIST, STATE, PINCODE)"] || "N/A").trim(),
@@ -119,25 +126,31 @@ export async function POST(request: Request) {
     let approval: any = null;
     try {
       const approvals = await prisma.certificateApproval.findMany({
-        where: { registrationNo: studentData.registrationNo },
+        where: {
+          OR: [
+            { registrationNo: excelRegNo },
+            { registrationNo: String(student["REGISTRATION NO"] || "").trim() },
+          ],
+        },
         orderBy: [{ updatedAt: "desc" }],
-        take: 5,
+        take: 10,
       });
 
       if (approvals.length === 0) {
         approval = {
           status: "pending",
-          registrationNo: studentData.registrationNo,
-          internshipTopic: studentData.internshipTopic,
+          registrationNo: excelRegNo,
+          internshipTopic: excelTopicRaw,
           remarks: null,
           approvedAt: null,
           firstTime: true,
         };
       } else {
         const specific = approvals.find(
-          (a) => a.internshipTopic === studentData.internshipTopic
+          (a) => normTopic(a.internshipTopic) === excelTopicNorm
         );
-        approval = specific || approvals[0];
+        const byReg = approvals.find((a) => norm(a.registrationNo) === excelRegNo);
+        approval = specific || byReg || approvals[0];
       }
     } catch (dbErr) {
       console.warn(
@@ -146,8 +159,8 @@ export async function POST(request: Request) {
       );
       approval = {
         status: "pending",
-        registrationNo: studentData.registrationNo,
-        internshipTopic: studentData.internshipTopic,
+        registrationNo: excelRegNo,
+        internshipTopic: excelTopicRaw,
         remarks: null,
         approvedAt: null,
       };
@@ -161,7 +174,7 @@ export async function POST(request: Request) {
         remarks: approval?.remarks || null,
         approvedAt: approval?.approvedAt || null,
         approvedBy: approval?.approvedBy || null,
-        internshipTopic: approval?.internshipTopic || studentData.internshipTopic,
+        internshipTopic: approval?.internshipTopic || excelTopicRaw,
         updatedAt: approval?.updatedAt || null,
       },
       documents: {

@@ -341,11 +341,18 @@ const styles = StyleSheet.create({
     width: CONTENT_W * 0.38,
   },
   sigArea: {
-    height: 48,                 // compact signing space
+    height: 48,
     width: '100%',
     borderBottomWidth: 1,
     borderBottomColor: '#AABBC0',
     borderBottomStyle: 'solid',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+  },
+  signImg: {
+    width: 100,
+    height: 38,
+    marginBottom: 4,
   },
   sigMeta: {
     paddingTop: 6,
@@ -492,7 +499,9 @@ const CertificatePDF: React.FC<Props> = ({
         {/* ---- SIGNATURE ROW (now in normal flow) ---- */}
         <View style={styles.sigRow}>
           <View style={styles.sigBlock}>
-            <View style={styles.sigArea} />
+            <View style={styles.sigArea}>
+              <Image src="/sign_coordinator.png" style={styles.signImg} />
+            </View>
             <View style={styles.sigMeta}>
               <Text style={styles.sigName}>Program Coordinator</Text>
               <Text style={styles.sigTitle}>Internship Division · Kodefort</Text>
@@ -500,7 +509,9 @@ const CertificatePDF: React.FC<Props> = ({
           </View>
 
           <View style={styles.sigBlock}>
-            <View style={styles.sigArea} />
+            <View style={styles.sigArea}>
+              <Image src="/sign.jpeg" style={styles.signImg} />
+            </View>
             <View style={styles.sigMeta}>
               <Text style={styles.sigName}>Kundan Kumar</Text>
               <Text style={styles.sigTitle}>Director · Kodefort</Text>

@@ -6,6 +6,7 @@ import Image from "next/image";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import PaymentReceiptPDF from "./components/PaymentReceiptPDF";
 import OfferLetterPDF from "./components/OfferLetterPDF";
+import CertificatePDF from "@/app/certificates/components/CertificatePDF";
 import {
   CheckCircle2,
   CreditCard,
@@ -17,7 +18,9 @@ import {
   Download,
   Shield,
   Zap,
-  Award
+  Award,
+  XCircle,
+  Clock
 } from "lucide-react";
 
 // Sample images for each internship (same as internship page)
@@ -57,6 +60,10 @@ interface Enrollment {
     registrationNo: string;
     email: string;
     mobileNo: string;
+    degree?: string | null;
+    session?: string | null;
+    subject?: string | null;
+    address?: string | null;
   };
   internship: Internship;
   payment: {
@@ -81,9 +88,31 @@ function DashboardContent() {
   const [hasSeenDownloadScreen, setHasSeenDownloadScreen] = useState(false);
   const [isPaying, setIsPaying] = useState(false);
   const [togglingTaskId, setTogglingTaskId] = useState<number | null>(null);
+  const [certApprovalStatus, setCertApprovalStatus] = useState<"pending" | "approved" | "rejected" | null>(null);
+  const [loadingCertApproval, setLoadingCertApproval] = useState(false);
   const enrollmentIdFromQuery = searchParams.get("enrollmentId");
   
   // Function to toggle task completion
+  const fetchCertApproval = async (regNo: string) => {
+    if (!regNo) return;
+    setLoadingCertApproval(true);
+    try {
+      const res = await fetch("/api/certificates/lookup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ registrationNo: regNo }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setCertApprovalStatus((data.approval?.status || "pending") as any);
+      }
+    } catch (e) {
+      console.error("fetchCertApproval error:", e);
+    } finally {
+      setLoadingCertApproval(false);
+    }
+  };
+
   const toggleTaskCompletion = async (taskId: number) => {
     if (!selectedEnrollment) return;
     console.log("Toggling task completion for task ID:", taskId);
@@ -371,6 +400,18 @@ function DashboardContent() {
     
     fetchEnrollments();
   }, [enrollmentIdFromQuery, router]);
+
+  useEffect(() => {
+    const regNo =
+      selectedEnrollment?.student?.registrationNo ||
+      safeParseJSON(localStorage.getItem("student"))?.registrationNo;
+    if (regNo && selectedEnrollment?.payment?.status === "completed") {
+      fetchCertApproval(regNo);
+    } else {
+      setCertApprovalStatus(null);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedEnrollment?.id, selectedEnrollment?.payment?.status]);
 
   if (loading) return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-orange-100 flex items-center justify-center">
@@ -781,7 +822,7 @@ function DashboardContent() {
                     </div>
                     <div>
                       <p className="text-4xl font-extrabold text-slate-900" style={{ fontFamily: 'Creato Display, Outfit, sans-serif' }}>
-                        2
+                        {certApprovalStatus === "approved" ? 3 : 2}
                       </p>
                       <p className="text-sm text-slate-600 font-semibold">Documents</p>
                     </div>
@@ -808,11 +849,46 @@ function DashboardContent() {
                     />
                   </div>
                   
-                  <div className="flex items-center gap-3">
+                  <div className="flex flex-col xl:flex-row gap-3 xl:items-center xl:justify-end w-full">
+                    {/* Certificate status pill */}
+                    {certApprovalStatus && (
+                      <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold shadow-sm ${
+                        certApprovalStatus === "approved"
+                          ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                          : certApprovalStatus === "rejected"
+                          ? "bg-rose-50 text-rose-700 border border-rose-200"
+                          : "bg-amber-50 text-amber-700 border border-amber-200"
+                      }`}>
+                        {certApprovalStatus === "approved" ? (
+                          <><CheckCircle2 className="w-3.5 h-3.5" /> Certificate Approved</>
+                        ) : certApprovalStatus === "rejected" ? (
+                          <><XCircle className="w-3.5 h-3.5" /> Certificate Rejected · Contact admin</>
+                        ) : (
+                          <><Clock className="w-3.5 h-3.5 animate-pulse" /> Admin Review in Progress</>
+                        )}
+                      </div>
+                    )}
+                    {loadingCertApproval && (
+                      <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold bg-slate-50 text-slate-600 border border-slate-200">
+                        <Loader2 className="w-3.5 h-3.5 animate-spin" /> Checking certificate status…
+                      </div>
+                    )}
+
                     {/* Download Buttons */}
+                    <div className="flex flex-wrap items-center gap-3 justify-end">
                     {selectedEnrollment && (() => {
-                      const student = safeParseJSON(localStorage.getItem("student")) || {};
+                      const student: any = safeParseJSON(localStorage.getItem("student")) || {};
                       const date = getCurrentDate();
+                      const sName = student.name || selectedEnrollment.student?.name || "N/A";
+                      const sCollege = student.collegeName || selectedEnrollment.student?.collegeName || "N/A";
+                      const sRegNo = student.registrationNo || selectedEnrollment.student?.registrationNo || "N/A";
+                      const sDegree = (student as any).degree || selectedEnrollment.student?.degree || "N/A";
+                      const sSession = (student as any).session || selectedEnrollment.student?.session || "N/A";
+                      const sSubject = (student as any).subject || selectedEnrollment.student?.subject || "N/A";
+                      const sAddress = (student as any).address || selectedEnrollment.student?.address || "N/A";
+                      const sEmail = student.email || selectedEnrollment.student?.email || "N/A";
+                      const sMobile = student.mobileNo || selectedEnrollment.student?.mobileNo || "N/A";
+                      const sTopic = selectedEnrollment.internship.name;
                       return (
                         <>
                           <PDFDownloadLink
@@ -823,16 +899,16 @@ function DashboardContent() {
                                 orderId={selectedEnrollment.payment?.orderId}
                                 paymentId={selectedEnrollment.payment?.paymentId}
                                 date={date}
-                                studentName={student.name || "N/A"}
-                                collegeName={student.collegeName || "N/A"}
-                                registrationNo={student.registrationNo || "N/A"}
-                                email={student.email || "N/A"}
-                                mobileNo={student.mobileNo || "N/A"}
-                                internshipName={selectedEnrollment.internship.name}
+                                studentName={sName}
+                                collegeName={sCollege}
+                                registrationNo={sRegNo}
+                                email={sEmail}
+                                mobileNo={sMobile}
+                                internshipName={sTopic}
                                 amountPaid="₹500.00"
                               />
                             }
-                            fileName={`Kodefort_Payment_Receipt_${student.registrationNo || "student"}.pdf`}
+                            fileName={`Kodefort_Payment_Receipt_${sRegNo || "student"}.pdf`}
                             className="group relative flex items-center gap-2 bg-gradient-to-b from-orange-500 via-orange-600 to-orange-700 text-white px-5 py-2.5 rounded-full font-bold text-base shadow-lg shadow-orange-500/30 hover:-translate-y-1 hover:shadow-xl hover:shadow-orange-500/40 transition-all duration-300 border border-orange-800/30 z-10"
                           >
                             {({ loading }) => (
@@ -854,15 +930,15 @@ function DashboardContent() {
                           <PDFDownloadLink
                             document={
                               <OfferLetterPDF
-                                studentName={student.name || "N/A"}
-                                collegeName={student.collegeName || "N/A"}
-                                registrationNo={student.registrationNo || "N/A"}
-                                email={student.email || "N/A"}
-                                mobileNo={student.mobileNo || "N/A"}
-                                internshipName={selectedEnrollment.internship.name}
+                                studentName={sName}
+                                collegeName={sCollege}
+                                registrationNo={sRegNo}
+                                email={sEmail}
+                                mobileNo={sMobile}
+                                internshipName={sTopic}
                               />
                             }
-                            fileName={`Kodefort_Offer_Letter_${student.registrationNo || "student"}.pdf`}
+                            fileName={`Kodefort_Offer_Letter_${sRegNo || "student"}.pdf`}
                             className="group relative flex items-center gap-2 bg-white text-orange-600 px-5 py-2.5 rounded-full font-bold text-base shadow-lg shadow-orange-500/20 hover:-translate-y-1 hover:shadow-xl hover:shadow-orange-500/30 transition-all duration-300 border-2 border-orange-300 z-10"
                           >
                             {({ loading }) => (
@@ -881,9 +957,43 @@ function DashboardContent() {
                               </div>
                             )}
                           </PDFDownloadLink>
+                          {certApprovalStatus === "approved" && (
+                            <PDFDownloadLink
+                              document={
+                                <CertificatePDF
+                                  studentName={sName}
+                                  collegeName={sCollege}
+                                  registrationNo={sRegNo}
+                                  internshipTopic={sTopic}
+                                  degree={sDegree}
+                                  session={sSession}
+                                  issueDate={date}
+                                />
+                              }
+                              fileName={`Kodefort_Completion_Certificate_${sRegNo || "student"}.pdf`}
+                              className="group relative flex items-center gap-2 bg-gradient-to-b from-emerald-500 via-emerald-600 to-teal-700 text-white px-5 py-2.5 rounded-full font-bold text-base shadow-lg shadow-emerald-500/30 hover:-translate-y-1 hover:shadow-xl hover:shadow-emerald-500/40 transition-all duration-300 border border-emerald-800/30 z-10"
+                            >
+                              {({ loading }) => (
+                                <div className="relative z-20 flex items-center gap-2">
+                                  {loading ? (
+                                    <>
+                                      <Loader2 className="w-4 h-4 animate-spin" />
+                                      Loading...
+                                    </>
+                                  ) : (
+                                    <>
+                                      <Award className="w-4 h-4 group-hover:scale-110 transition-transform duration-300" />
+                                      Completion Cert
+                                    </>
+                                  )}
+                                </div>
+                              )}
+                            </PDFDownloadLink>
+                          )}
                         </>
                       );
                     })()}
+                    </div>
                   </div>
                 </div>
 
