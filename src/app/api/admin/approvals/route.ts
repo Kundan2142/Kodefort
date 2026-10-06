@@ -83,35 +83,35 @@ export async function GET(request: NextRequest) {
       ];
     }
 
-    const [items, counts] = await Promise.all([
+    const [items, counts, totalCount, uniqueStudents] = await Promise.all([
       prisma.certificateApproval.findMany({
         where,
         orderBy: [{ status: "asc" }, { createdAt: "desc" }],
-        take: 500,
       }),
       prisma.certificateApproval.groupBy({
         by: ["status"],
         _count: { status: true },
       }),
+      prisma.certificateApproval.count(),
+      prisma.student.count(),
     ]);
 
     const summary: Record<string, number> = {
       pending: 0,
       approved: 0,
       rejected: 0,
-      all: items.length,
+      all: totalCount,
+      uniqueStudents,
     };
     for (const c of counts) {
-      summary[c.status || "all"] = c._count.status || 0;
+      summary[c.status || "pending"] = c._count.status || 0;
     }
-    summary.all = Object.values(summary).reduce((a, b) => a + b, 0) - (summary.all || 0) + items.length;
-    summary.all = items.length;
 
     return NextResponse.json({
       success: true,
       items,
       summary,
-      total: items.length,
+      total: totalCount,
     });
   } catch (err) {
     console.error("[admin/approvals GET] error:", err);
@@ -208,13 +208,24 @@ export async function POST(request: NextRequest) {
     const ws = wb.Sheets[firstSheet];
     const rows = XLSX.utils.sheet_to_json<any>(ws, { defval: "" });
 
+    const { createHash } = await import("crypto");
+    const fingerprint = (parts: (string | number | null | undefined)[]) =>
+      createHash("sha1")
+        .update(parts.map((p) => (p == null ? "" : String(p))).join("|||"))
+        .digest("hex");
+
     let created = 0;
     let updated = 0;
     let skipped = 0;
     const errors: string[] = [];
 
-    for (const row of rows) {
+    for (let i = 0; i < rows.length; i++) {
+      const row = rows[i];
       try {
+        const sourceRowIndex = i + 2; // +2 because: 0-indexed rows + header row in sheet
+        const timestampRaw =
+          row["Timestamp"] || row["timestamp"] || row["Time Stamp"] || "";
+
         const registrationNo = String(
           row["REGISTRATION NO"] || row["Registration No"] || row["reg no"] || ""
         )
@@ -256,7 +267,7 @@ export async function POST(request: NextRequest) {
             ""
         ).trim() || null;
 
-        let dateOfBirth = null;
+        let dateOfBirth: Date | null = null;
         const rawDob =
           row["DATE OF BIRTH (DOB)"] ||
           row["DATE OF BIRTH "] ||
@@ -305,42 +316,59 @@ export async function POST(request: NextRequest) {
           });
         }
 
-        const existing = await prisma.certificateApproval.findFirst({
-          where: { registrationNo, internshipTopic },
+        const fp = fingerprint([
+          timestampRaw,
+          sourceRowIndex,
+          registrationNo,
+          internshipTopic,
+          studentName,
+          collegeName,
+        ]);
+
+        const baseData = {
+          registrationNo,
+          studentName,
+          collegeName,
+          internshipTopic,
+          degree,
+          session,
+          subject,
+          email,
+          mobileNo,
+          address,
+          sourceRowIndex,
+          sourceFingerprint: fp,
+        };
+
+        const existing = await prisma.certificateApproval.findUnique({
+          where: { sourceFingerprint: fp },
         });
 
         if (existing) {
           await prisma.certificateApproval.update({
             where: { id: existing.id },
-            data: {
-              studentName,
-              collegeName,
-              degree,
-              session,
-              subject,
-              email,
-              mobileNo,
-              address,
-            },
+            data: baseData,
           });
           updated++;
         } else {
-          await prisma.certificateApproval.create({
-            data: {
-              registrationNo,
-              studentName,
-              collegeName,
-              internshipTopic,
-              status: "pending",
-              degree,
-              session,
-              subject,
-              email,
-              mobileNo,
-              address,
-            },
-          });
-          created++;
+          try {
+            await prisma.certificateApproval.create({
+              data: {
+                ...baseData,
+                status: "pending",
+              },
+            });
+            created++;
+          } catch (createErr: any) {
+            if (createErr?.code === "P2002") {
+              errors.push(
+                `Row ${sourceRowIndex}: fingerprint collision, skipping (${fp})`
+              );
+              skipped++;
+            } else {
+              throw createErr;
+            }
+          }
         }
       } catch (rowErr: any) {
         errors.push(rowErr?.message || String(rowErr));

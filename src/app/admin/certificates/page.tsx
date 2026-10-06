@@ -178,10 +178,10 @@ export default function AdminApprovalsPage() {
     }
   }
 
-  const totalCount = items.length;
-  const pendingCount = items.filter((i) => i.status === "pending").length;
-  const approvedCount = items.filter((i) => i.status === "approved").length;
-  const rejectedCount = items.filter((i) => i.status === "rejected").length;
+  const totalCount = summary.all ?? items.length;
+  const pendingCount = summary.pending ?? items.filter((i) => i.status === "pending").length;
+  const approvedCount = summary.approved ?? items.filter((i) => i.status === "approved").length;
+  const rejectedCount = summary.rejected ?? items.filter((i) => i.status === "rejected").length;
 
   if (!ready) return null;
   if (!auth) return null;
@@ -237,12 +237,18 @@ export default function AdminApprovalsPage() {
 
       <main className="mx-auto max-w-[1400px] px-5 sm:px-8 lg:px-10 py-8 sm:py-10">
         {/* Stat cards */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
+        <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4 mb-6 sm:mb-8">
           <StatCard
-            label="Total Students"
-            value={totalCount}
+            label="Unique Students"
+            value={summary.uniqueStudents ?? items.length}
             icon={<Users className="h-4.5 w-4.5" />}
             tint="slate"
+          />
+          <StatCard
+            label="Total Records"
+            value={totalCount}
+            icon={<FileCheck2 className="h-4.5 w-4.5" />}
+            tint="sky"
           />
           <StatCard
             label="Pending Review"
@@ -398,8 +404,11 @@ export default function AdminApprovalsPage() {
               <span className="font-semibold text-slate-700">
                 {filteredItems.length}
               </span>{" "}
-              of <span className="font-semibold text-slate-700">{totalCount}</span>{" "}
-              total records.
+              of{" "}
+              <span className="font-semibold text-slate-700">
+                {statusFilter !== "all" ? summary[statusFilter] ?? items.length : totalCount}
+              </span>{" "}
+              {statusFilter !== "all" ? `${statusFilter} records (from ${totalCount} total)` : "total records"}.
             </p>
             <p className="text-[12px] text-slate-400">
               Tip: Approve each student individually, then students can download
@@ -469,7 +478,7 @@ function StatCard({
   label: string;
   value: number;
   icon: React.ReactNode;
-  tint: "slate" | "amber" | "emerald" | "rose";
+  tint: "slate" | "amber" | "emerald" | "rose" | "sky";
   highlight?: boolean;
 }) {
   const tints = {
@@ -479,6 +488,7 @@ function StatCard({
     emerald:
       "from-emerald-500/15 to-emerald-400/5 text-emerald-700 border-emerald-200",
     rose: "from-rose-500/15 to-rose-400/5 text-rose-700 border-rose-200",
+    sky: "from-sky-500/15 to-sky-400/5 text-sky-700 border-sky-200",
   } as const;
   return (
     <div
