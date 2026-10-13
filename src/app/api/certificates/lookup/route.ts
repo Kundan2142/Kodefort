@@ -9,6 +9,7 @@ export const dynamic = "force-dynamic";
 
 let cachedData: any[] | null = null;
 let cachedFilePath: string | null = null;
+let cachedFileMtime: number | null = null;
 
 function resolveExcelPath(): string {
   if (cachedFilePath && existsSync(cachedFilePath)) {
@@ -55,10 +56,26 @@ function resolveExcelPath(): string {
 }
 
 async function loadExcelData(): Promise<any[]> {
-  if (cachedData) return cachedData;
-
   const excelPath = resolveExcelPath();
-  console.log("[certificates lookup] Resolved excel path:", excelPath);
+
+  let currentMtime: number | null = null;
+  try {
+    currentMtime = (await fsPromises.stat(excelPath)).mtimeMs;
+  } catch {
+    currentMtime = null;
+  }
+
+  // Invalidate cache if the file was modified since last load
+  if (
+    cachedData &&
+    cachedFileMtime !== null &&
+    currentMtime !== null &&
+    currentMtime <= cachedFileMtime
+  ) {
+    return cachedData;
+  }
+
+  console.log("[certificates lookup] (re)loading excel from:", excelPath);
 
   if (!existsSync(excelPath)) {
     console.error("[certificates lookup] File does not exist at:", excelPath);
@@ -72,6 +89,7 @@ async function loadExcelData(): Promise<any[]> {
   const data = XLSX.utils.sheet_to_json(worksheet, { defval: "" });
 
   cachedData = data;
+  cachedFileMtime = currentMtime;
   console.log("[certificates lookup] Loaded", data.length, "rows from Excel");
   return data;
 }

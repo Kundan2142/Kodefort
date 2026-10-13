@@ -967,7 +967,7 @@ function DashboardContent() {
                                   internshipTopic={sTopic}
                                   degree={sDegree}
                                   session={sSession}
-                                  issueDate={date}
+                                  issueDate="12 October 2026"
                                 />
                               }
                               fileName={`Kodefort_Completion_Certificate_${sRegNo || "student"}.pdf`}

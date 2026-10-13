@@ -4,6 +4,7 @@ import { useState } from "react";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import CertificatePDF from "./components/CertificatePDF";
 import OfferLetterPDF from "./components/OfferLetterPDF";
+import PaymentReceiptPDF from "../internship/dashboard/components/PaymentReceiptPDF";
 import {
   Search,
   Download,
@@ -23,6 +24,7 @@ import {
   Briefcase,
   FileCheck2,
   Clock,
+  Receipt,
 } from "lucide-react";
 
 interface StudentData {
@@ -38,7 +40,7 @@ interface StudentData {
   address: string;
 }
 
-type DocTab = "offer" | "certificate";
+type DocTab = "offer" | "certificate" | "receipt";
 type ApprovalStatus = "pending" | "approved" | "rejected";
 
 interface ApprovalInfo {
@@ -374,6 +376,19 @@ export default function CertificatesPage() {
     });
   };
 
+  const formatApprovalDate = (iso: string | null) => {
+    if (!iso) return getCurrentDate();
+    const d = new Date(iso);
+    if (isNaN(d.getTime())) return getCurrentDate();
+    return d.toLocaleDateString("en-IN", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+  };
+
+  const receiptDate = formatApprovalDate(approval?.approvedAt ?? null);
+
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!registrationNo.trim()) {
@@ -660,13 +675,13 @@ export default function CertificatesPage() {
                         style={{ fontFamily: "Creato Display, Outfit, sans-serif" }}
                       >
                         {approval?.status === "approved"
-                          ? "Both documents ready for download"
+                          ? "Offer letter, certificate & payment receipt ready"
                           : "Offer letter ready · certificate under admin review"}
                       </h2>
                       <p className="mt-1 text-[14.5px] text-slate-600">
                         {approval?.status === "approved"
-                          ? "All record checks passed and admin has approved your completion certificate. Download your signed PDFs below."
-                          : "Your enrollment has been verified. Your Offer Letter is available now. The Completion Certificate will unlock after Kodefort admin review."}
+                          ? "All record checks passed and admin has approved your completion certificate. Download your signed PDFs and ₹500 fee receipt below."
+                          : "Your enrollment has been verified. Your Offer Letter is available now. The Completion Certificate and fee receipt will unlock after Kodefort admin review."}
                       </p>
                     </div>
                   </div>
@@ -766,7 +781,9 @@ export default function CertificatesPage() {
                     <div className="flex flex-col items-center text-center mb-7">
                       <div className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3.5 py-1.5 text-xs font-semibold text-slate-600 mb-5">
                         <FileCheck2 className="h-3.5 w-3.5" strokeWidth={2} />
-                        Two documents available · High-quality PDF · Print-ready
+                        {approval?.status === "approved"
+                          ? "Three documents available · High-quality PDF · Print-ready"
+                          : "Two documents available · High-quality PDF · Print-ready"}
                       </div>
 
                       <div className="inline-flex rounded-xl border border-slate-200 bg-white p-1 shadow-sm">
@@ -796,6 +813,21 @@ export default function CertificatesPage() {
                           <Award className="h-4 w-4" strokeWidth={2} />
                           Completion Certificate
                         </button>
+                        {approval?.status === "approved" && (
+                          <button
+                            type="button"
+                            onClick={() => setActiveTab("receipt")}
+                            className={
+                              "inline-flex items-center gap-2 rounded-lg px-4 sm:px-5 h-11 text-sm font-semibold transition-all duration-200 " +
+                              (activeTab === "receipt"
+                                ? "bg-gradient-to-br from-orange-500 to-rose-600 text-white shadow-md"
+                                : "text-slate-600 hover:text-slate-900 hover:bg-slate-50")
+                            }
+                          >
+                            <Receipt className="h-4 w-4" strokeWidth={2} />
+                            Payment Receipt
+                          </button>
+                        )}
                       </div>
                     </div>
 
@@ -819,7 +851,7 @@ export default function CertificatesPage() {
                                   Official Document
                                 </span>
                                 <span className="text-[12px] text-slate-400 font-medium">
-                                  Issued {getCurrentDate()}
+                                  Issued 12 October 2026
                                 </span>
                               </div>
                               <h3
@@ -861,11 +893,11 @@ export default function CertificatesPage() {
                               <div className="flex items-center gap-2 mb-1.5">
                                 <CalendarDays className="h-3.5 w-3.5 text-[#2A5AA6]" strokeWidth={2} />
                                 <span className="text-[10.5px] font-bold text-slate-500 uppercase tracking-[0.12em]">
-                                  Period
+                                  Date of Issue
                                 </span>
                               </div>
                               <p className="text-[12.5px] font-semibold text-slate-900">
-                                20 Jul – 10 Aug 2026
+                                12 October 2026
                               </p>
                             </div>
                           </div>
@@ -1005,7 +1037,7 @@ export default function CertificatesPage() {
                                     internshipTopic={student.internshipTopic}
                                     degree={student.degree}
                                     session={student.session}
-                                    issueDate={getCurrentDate()}
+                                    issueDate="12 October 2026"
                                   />
                                 }
                                 fileName={`Kodefort_Certificate_${student.registrationNo}.pdf`}
@@ -1040,6 +1072,123 @@ export default function CertificatesPage() {
                           studentName={student.studentName}
                         />
                       )
+                    )}
+
+                    {activeTab === "receipt" && approval?.status === "approved" && (
+                      <div className="relative mx-auto w-full max-w-3xl">
+                        <div
+                          className="absolute -inset-2 rounded-2xl bg-gradient-to-br from-orange-400/10 via-rose-400/10 to-amber-400/10 blur-2xl opacity-70"
+                          aria-hidden="true"
+                        />
+                        <div className="relative overflow-hidden rounded-2xl border border-orange-200/40 bg-gradient-to-br from-white via-white to-orange-50/40 shadow-[0_1px_2px_rgba(15,23,42,0.04),0_24px_50px_-18px_rgba(249,115,22,0.22)]">
+                          <div className="flex items-center gap-4 px-6 sm:px-8 py-5 border-b border-slate-100">
+                            <div className="relative flex-shrink-0">
+                              <div className="absolute -inset-2 rounded-xl bg-orange-400/20 blur-lg" />
+                              <div className="relative h-12 w-12 flex items-center justify-center rounded-xl bg-gradient-to-br from-orange-500 to-rose-600 shadow-lg shadow-orange-500/25 text-white">
+                                <Receipt className="h-6 w-6" strokeWidth={2} />
+                              </div>
+                            </div>
+                            <div className="flex-1 text-left">
+                              <div className="flex items-center gap-2 mb-1">
+                                <span className="inline-flex items-center gap-1 rounded-full bg-orange-100 px-2.5 py-0.5 text-[11px] font-bold text-orange-700 tracking-wide uppercase">
+                                  <CheckCircle2 className="h-3 w-3" />
+                                  Paid · Approved
+                                </span>
+                                <span className="text-[12px] text-slate-400 font-medium">
+                                  Dated {receiptDate}
+                                </span>
+                              </div>
+                              <h3
+                                className="text-[1.3rem] font-bold tracking-tight text-slate-900 leading-tight"
+                                style={{ fontFamily: "Creato Display, Outfit, sans-serif" }}
+                              >
+                                Internship Fee Payment Receipt
+                              </h3>
+                              <p className="mt-0.5 text-[13.5px] text-slate-600">
+                                Official receipt of the ₹500 internship fee, issued on the date of admin approval.
+                              </p>
+                            </div>
+                          </div>
+
+                          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 px-6 sm:px-8 py-5 bg-white/50 border-b border-slate-100">
+                            <div className="rounded-lg border border-slate-200/70 bg-white p-3.5">
+                              <div className="flex items-center gap-2 mb-1.5">
+                                <Hash className="h-3.5 w-3.5 text-orange-600" strokeWidth={2} />
+                                <span className="text-[10.5px] font-bold text-slate-500 uppercase tracking-[0.12em]">
+                                  Receipt No.
+                                </span>
+                              </div>
+                              <p className="font-mono text-[12.5px] font-semibold text-slate-900">
+                                KDF/REC/{String(student.registrationNo).slice(-8)}
+                              </p>
+                            </div>
+                            <div className="rounded-lg border border-slate-200/70 bg-white p-3.5">
+                              <div className="flex items-center gap-2 mb-1.5">
+                                <BookOpen className="h-3.5 w-3.5 text-orange-600" strokeWidth={2} />
+                                <span className="text-[10.5px] font-bold text-slate-500 uppercase tracking-[0.12em]">
+                                  Topic
+                                </span>
+                              </div>
+                              <p className="text-[12.5px] font-semibold text-slate-900 truncate">
+                                {student.internshipTopic}
+                              </p>
+                            </div>
+                            <div className="rounded-lg border border-slate-200/70 bg-white p-3.5">
+                              <div className="flex items-center gap-2 mb-1.5">
+                                <CalendarDays className="h-3.5 w-3.5 text-orange-600" strokeWidth={2} />
+                                <span className="text-[10.5px] font-bold text-slate-500 uppercase tracking-[0.12em]">
+                                  Approval Date
+                                </span>
+                              </div>
+                              <p className="text-[12.5px] font-semibold text-slate-900">
+                                {receiptDate}
+                              </p>
+                            </div>
+                          </div>
+
+                          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 px-6 sm:px-8 py-6">
+                            <div className="inline-flex items-center gap-1.5 text-xs font-medium text-slate-500 sm:mr-3">
+                              <FileText className="h-3.5 w-3.5" strokeWidth={2} />
+                              A4 Portrait · ₹500.00 · {student.studentName}
+                            </div>
+                            <PDFDownloadLink
+                              document={
+                                <PaymentReceiptPDF
+                                  receiptId={`KF-REC-${student.registrationNo}`}
+                                  receiptNo={`KDF/REC/${String(student.registrationNo).slice(-8)}`}
+                                  date={receiptDate}
+                                  studentName={student.studentName}
+                                  collegeName={student.collegeName}
+                                  registrationNo={student.registrationNo}
+                                  email={student.email}
+                                  mobileNo={student.mobileNo}
+                                  internshipName={student.internshipTopic}
+                                  amountPaid="₹500.00"
+                                />
+                              }
+                              fileName={`Kodefort_Payment_Receipt_${student.registrationNo}.pdf`}
+                              className="group relative inline-flex h-14 items-center justify-center gap-2.5 rounded-xl bg-gradient-to-br from-orange-500 to-rose-600 px-8 text-base font-bold text-white shadow-[0_1px_2px_rgba(15,23,42,0.04),0_20px_40px_-12px_rgba(249,115,22,0.55)] transition-all duration-250 hover:-translate-y-0.5 hover:shadow-[0_1px_2px_rgba(15,23,42,0.04),0_28px_50px_-12px_rgba(249,115,22,0.65)] active:translate-y-0"
+                            >
+                              {({ loading: pdfLoading }) =>
+                                pdfLoading ? (
+                                  <>
+                                    <Loader2 className="h-5 w-5 animate-spin" />
+                                    Generating receipt…
+                                  </>
+                                ) : (
+                                  <>
+                                    <Download
+                                      className="h-5 w-5 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+                                      strokeWidth={2}
+                                    />
+                                    Download Payment Receipt PDF
+                                  </>
+                                )
+                              }
+                            </PDFDownloadLink>
+                          </div>
+                        </div>
+                      </div>
                     )}
                   </div>
                 </div>

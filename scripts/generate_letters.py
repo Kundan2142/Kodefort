@@ -314,7 +314,7 @@ def make_student_details_table(student, width):
         ("Internship Topic",  student["topic"]),
         ("Internship Period", "20 July 2026 – 10 August 2026"),
         ("Mode",              "Hybrid (Online)"),
-        ("Duration",          "22 Days"),
+        ("Duration",          "120 Hours"),
     ]
     # Arrange as 4 rows × 4 cols: (Label, Value, Label, Value)
     rows = []

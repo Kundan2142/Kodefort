@@ -397,11 +397,13 @@ const OfferLetterPDF: React.FC<Props> = ({
     'Kodefort reserves the right to terminate the internship at any time for non-performance or breach of company policy.',
   ];
 
+  const ISSUE_DATE = '12 October 2026';
+
   const rows: Array<[string, string, string, string]> = [
     ['Registration No.', registrationNo, 'Degree', degree],
     ['Session', session, 'Subject', subject],
-    ['Internship Topic', internshipTopic, 'Internship Period', '20 July 2026 – 10 August 2026'],
-    ['Mode', 'Hybrid (Online)', 'Duration', '22 Days'],
+    ['Internship Topic', internshipTopic, 'Mode', 'Hybrid (Online)'],
+    ['Duration', '120 Hours', 'Date of Issue', ISSUE_DATE],
   ];
 
   const B = (children: string) => (
@@ -437,7 +439,7 @@ const OfferLetterPDF: React.FC<Props> = ({
           {/* Meta */}
           <View style={styles.metaRow}>
             <Text style={styles.metaL}>
-              {B('Date of Issue:')} {issueDate}
+              {B('Date of Issue:')} {ISSUE_DATE}
             </Text>
             <Text style={styles.metaR}>
               {B('Reference No:')} {ref}

@@ -217,9 +217,14 @@ export async function POST(request: NextRequest) {
     let created = 0;
     let updated = 0;
     let skipped = 0;
+    let deleted = 0;
     const errors: string[] = [];
+    const totalRows = rows.length;
+    let lastLog = Date.now();
+    const seenFingerprints = new Set<string>();
+    const seenRegNos = new Set<string>();
 
-    for (let i = 0; i < rows.length; i++) {
+    for (let i = 0; i < totalRows; i++) {
       const row = rows[i];
       try {
         const sourceRowIndex = i + 2; // +2 because: 0-indexed rows + header row in sheet
@@ -317,13 +322,13 @@ export async function POST(request: NextRequest) {
         }
 
         const fp = fingerprint([
-          timestampRaw,
-          sourceRowIndex,
           registrationNo,
           internshipTopic,
           studentName,
           collegeName,
         ]);
+        seenFingerprints.add(fp);
+        seenRegNos.add(registrationNo);
 
         const baseData = {
           registrationNo,
@@ -374,6 +379,53 @@ export async function POST(request: NextRequest) {
         errors.push(rowErr?.message || String(rowErr));
         skipped++;
       }
+
+      // Progress log every 100 rows or every 5 seconds
+      const now = Date.now();
+      if ((i + 1) % 100 === 0 || now - lastLog > 5000) {
+        const pct = ((i + 1) / totalRows) * 100;
+        console.log(
+          `[sync] ${i + 1}/${totalRows} (${pct.toFixed(1)}%) | created=${created} updated=${updated} skipped=${skipped}`
+        );
+        lastLog = now;
+      }
+    }
+
+    // ---- Prune stale rows no longer present in the current Excel ----
+    const currentFps = Array.from(seenFingerprints);
+    const currentRegNos = Array.from(seenRegNos);
+
+    if (currentFps.length > 0) {
+      const delRes = await prisma.certificateApproval.deleteMany({
+        where: { sourceFingerprint: { notIn: currentFps } },
+      });
+      deleted = delRes.count;
+      console.log(
+        `[sync] pruned ${deleted} stale CertificateApproval row(s) not in current Excel`
+      );
+    }
+
+    // Prune students no longer in the Excel (only those without enrollments to avoid FK issues)
+    let deletedStudents = 0;
+    if (currentRegNos.length > 0) {
+      const staleStudents = await prisma.student.findMany({
+        where: { registrationNo: { notIn: currentRegNos } },
+        include: { enrollments: { select: { id: true } } },
+      });
+      const deletable = staleStudents.filter((s) => s.enrollments.length === 0);
+      if (deletable.length > 0) {
+        const sdel = await prisma.student.deleteMany({
+          where: {
+            registrationNo: {
+              in: deletable.map((s) => s.registrationNo),
+            },
+          },
+        });
+        deletedStudents = sdel.count;
+        console.log(
+          `[sync] pruned ${deletedStudents} stale Student row(s) not in current Excel`
+        );
+      }
     }
 
     return NextResponse.json({
@@ -381,6 +433,8 @@ export async function POST(request: NextRequest) {
       created,
       updated,
       skipped,
+      deleted,
+      deletedStudents,
       totalRows: rows.length,
       errors: errors.slice(0, 20),
       source: excelPath,
