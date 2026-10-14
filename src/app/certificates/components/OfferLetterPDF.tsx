@@ -397,7 +397,7 @@ const OfferLetterPDF: React.FC<Props> = ({
     'Kodefort reserves the right to terminate the internship at any time for non-performance or breach of company policy.',
   ];
 
-  const ISSUE_DATE = '12 October 2026';
+  const ISSUE_DATE = '15 July 2026';
 
   const rows: Array<[string, string, string, string]> = [
     ['Registration No.', registrationNo, 'Degree', degree],
