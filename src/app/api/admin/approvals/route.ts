@@ -130,11 +130,31 @@ export async function PATCH(request: NextRequest) {
       internshipTopic,
       status,
       remarks,
+      // Optional student-data fields so admin can correct records directly
+      // in the database without re-importing the Excel sheet.
+      studentName,
+      collegeName,
+      degree,
+      session,
+      subject,
+      email,
+      mobileNo,
+      address,
     } = await request.json();
 
-    if (!status || !["approved", "rejected", "pending"].includes(status)) {
+    if (status && !["approved", "rejected", "pending"].includes(status)) {
       return NextResponse.json(
         { error: "Invalid status. Must be: approved | rejected | pending" },
+        { status: 400 }
+      );
+    }
+
+    if (!status && studentName === undefined && collegeName === undefined &&
+        internshipTopic === undefined && degree === undefined &&
+        session === undefined && subject === undefined && email === undefined &&
+        mobileNo === undefined && address === undefined && remarks === undefined) {
+      return NextResponse.json(
+        { error: "Provide at least one field to update (status, remarks, or student data)." },
         { status: 400 }
       );
     }
@@ -169,13 +189,32 @@ export async function PATCH(request: NextRequest) {
     }
 
     const updateData: any = {
-      status,
       remarks: remarks ?? existing.remarks,
-      approvedBy:
-        status === "approved" ? auth.adminId : status === "rejected" ? auth.adminId : existing.approvedBy,
-      approvedAt:
-        status === "approved" ? new Date() : status === "rejected" ? new Date() : existing.approvedAt,
     };
+
+    // Status-related fields only change when a status is explicitly provided.
+    if (status) {
+      updateData.status = status;
+      if (status === "approved" || status === "rejected") {
+        updateData.approvedBy = auth.adminId;
+        updateData.approvedAt = new Date();
+      } else {
+        // moving back to pending keeps previous approval metadata
+        updateData.approvedBy = existing.approvedBy;
+        updateData.approvedAt = existing.approvedAt;
+      }
+    }
+
+    // Student-data field overrides (admin can correct records directly in DB).
+    if (studentName !== undefined) updateData.studentName = String(studentName).trim();
+    if (collegeName !== undefined) updateData.collegeName = String(collegeName).trim();
+    if (internshipTopic !== undefined) updateData.internshipTopic = String(internshipTopic).trim();
+    if (degree !== undefined) updateData.degree = degree ? String(degree).trim() : null;
+    if (session !== undefined) updateData.session = session ? String(session).trim() : null;
+    if (subject !== undefined) updateData.subject = subject ? String(subject).trim() : null;
+    if (email !== undefined) updateData.email = email ? String(email).trim() : null;
+    if (mobileNo !== undefined) updateData.mobileNo = mobileNo ? String(mobileNo).trim() : null;
+    if (address !== undefined) updateData.address = address ? String(address).trim() : null;
 
     const updated = await prisma.certificateApproval.update({
       where: { id: existing.id },
