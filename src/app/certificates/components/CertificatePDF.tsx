@@ -468,8 +468,8 @@ const CertificatePDF: React.FC<Props> = ({
         </Text>
 
         <View style={styles.topicWrap}>
-          <Text style={styles.topicLabel}>Internship Discipline</Text>
-          <Text style={styles.topicValue}>{internshipTopic}</Text>
+          <Text style={styles.topicLabel}>Internship Discipline & Duration</Text>
+          <Text style={styles.topicValue}>{internshipTopic} (3 Months / 120 Hours)</Text>
         </View>
 
         {/* ---- 2-COLUMN INFO GRID ---- */}
