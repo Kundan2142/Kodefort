@@ -15,15 +15,15 @@ const FRAME = 22;             // outer frame inset
 const INNER_PAD = 56;         // side padding for content
 const CONTENT_W = PAGE_W - 2 * INNER_PAD; // 730
 
-const V_START = 48;           // reduced top padding so content fits on one page
+const V_START = 22;           // top offset for the flow content
 
 const FONT = {
   BRAND: 13,
   BRAND_TAG: 8,
-  TITLE: 34,                  // slightly reduced
+  TITLE: 30,
   SUBTITLE: 9.5,
   PRESENTED: 9,
-  NAME: 28,                   // slightly reduced
+  NAME: 24,
   LABEL: 8,
   COLLEGE: 12,
   DESC: 10.5,
@@ -71,7 +71,11 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   innerFrame: {
-    flex: 1,
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
     border: 1,
     borderColor: '#D8C8A8',
     borderStyle: 'solid',
@@ -153,7 +157,7 @@ const styles = StyleSheet.create({
     marginLeft: INNER_PAD,
     marginRight: INNER_PAD,
     paddingTop: V_START,
-    paddingBottom: 20,
+    paddingBottom: 4,
   },
   brand: {
     fontSize: FONT.BRAND,
@@ -181,7 +185,7 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
     // Give the large heading enough vertical room so the subtitle cannot overlap it.
     lineHeight: 1.2,
-    marginBottom: 8,
+    marginBottom: 2,
   },
   subtitle: {
     fontSize: FONT.SUBTITLE,
@@ -189,14 +193,14 @@ const styles = StyleSheet.create({
     color: '#607781',
     letterSpacing: TRACK.SUBTITLE,
     textTransform: 'uppercase',
-    marginBottom: 10,
+    marginBottom: 6,
   },
   divider: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     gap: 10,
-    marginBottom: 12,
+    marginBottom: 8,
   },
   divS: { width: 36, height: 1, backgroundColor: '#D8C8A8' },
   divL: { width: 70, height: 1, backgroundColor: '#D8C8A8' },
@@ -212,7 +216,7 @@ const styles = StyleSheet.create({
     color: '#82939B',
     textTransform: 'uppercase',
     letterSpacing: TRACK.PRESENTED,
-    marginBottom: 10,
+    marginBottom: 8,
   },
   name: {
     fontSize: FONT.NAME,
@@ -236,13 +240,13 @@ const styles = StyleSheet.create({
     marginHorizontal: (CONTENT_W - 380) / 2,
   },
   collegeLabel: {
-    marginTop: 10,
+    marginTop: 8,
     fontSize: FONT.LABEL,
     textAlign: 'center',
     color: '#82939B',
     textTransform: 'uppercase',
     letterSpacing: TRACK.LABEL,
-    marginBottom: 3,
+    marginBottom: 2,
   },
   collegeValue: {
     fontSize: FONT.COLLEGE,
@@ -253,18 +257,18 @@ const styles = StyleSheet.create({
     marginBottom: 0,
   },
   description: {
-    marginTop: 10,
+    marginTop: 6,
     fontSize: FONT.DESC,
     textAlign: 'center',
     color: '#52666E',
-    lineHeight: 1.5,
-    paddingHorizontal: 40,
+    lineHeight: 1.2,
+    paddingHorizontal: 30,
   },
   topicWrap: {
-    marginTop: 10,
+    marginTop: 6,
     alignSelf: 'center',
     paddingHorizontal: 22,
-    paddingVertical: 7,
+    paddingVertical: 5,
     border: 1,
     borderColor: '#E8E1D5',
     borderStyle: 'solid',
@@ -289,7 +293,7 @@ const styles = StyleSheet.create({
 
   // ===================== 2-COLUMN INFO GRID =====================
   grid: {
-    marginTop: 14,
+    marginTop: 8,
     flexDirection: 'column',
     width: CONTENT_W - 80,
     marginHorizontal: 40,
@@ -298,7 +302,7 @@ const styles = StyleSheet.create({
     borderStyle: 'solid',
     borderRadius: 4,
     backgroundColor: '#FBF9F4',
-    paddingVertical: 12,
+    paddingVertical: 5,
     paddingHorizontal: 18,
   },
   // Each grid row explicitly contains two side-by-side cells. This keeps all
@@ -306,7 +310,7 @@ const styles = StyleSheet.create({
   gridRow: {
     width: '100%',
     flexDirection: 'row',
-    marginBottom: 12,
+    marginBottom: 5,
   },
   gridRowBottom: {
     width: '100%',
@@ -332,7 +336,7 @@ const styles = StyleSheet.create({
 
   // ===================== SIGNATURE SECTION (IN FLOW) =====================
   sigRow: {
-    marginTop: 18,
+    marginTop: 8,
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingHorizontal: 20,
@@ -341,7 +345,7 @@ const styles = StyleSheet.create({
     width: CONTENT_W * 0.38,
   },
   sigArea: {
-    height: 48,
+    height: 28,
     width: '100%',
     borderBottomWidth: 1,
     borderBottomColor: '#AABBC0',
@@ -350,12 +354,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   signImg: {
-    width: 100,
-    height: 38,
-    marginBottom: 4,
+    width: 80,
+    height: 22,
+    marginBottom: 1,
   },
   sigMeta: {
-    paddingTop: 6,
+    paddingTop: 3,
   },
   sigName: {
     fontSize: FONT.SIG_NAME,
@@ -368,12 +372,12 @@ const styles = StyleSheet.create({
     color: '#82939B',
     textTransform: 'uppercase',
     letterSpacing: TRACK.SIG_TITLE,
-    marginTop: 2,
+    marginTop: 1,
   },
 
   // ===================== FOOTER (IN FLOW) =====================
   footer: {
-    marginTop: 16,
+    marginTop: 6,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -437,7 +441,7 @@ const CertificatePDF: React.FC<Props> = ({
       </View>
 
       {/* ===================== MAIN FLOW (everything in document order) ===================== */}
-      <View style={styles.flow} wrap={false}>
+      <View style={styles.flow}>
         <Text style={styles.brand}>Kodefort</Text>
         <Text style={styles.brandTag}>Software · Cybersecurity · Excellence</Text>
 
