@@ -471,10 +471,41 @@ const CertificatePDF: React.FC<Props> = ({
           demonstrating diligence, mastery of core concepts, and commitment to professional growth.
         </Text>
 
-        <View style={styles.topicWrap}>
+        {/* <View style={styles.topicWrap}>
           <Text style={styles.topicLabel}>Internship Discipline & Duration</Text>
-          <Text style={styles.topicValue}>{internshipTopic} (3 Months / 120 Hours)</Text>
-        </View>
+          <Text style={styles.topicValue}>{internshipTopic} (12 th July 2026 to 12 October 2026)</Text>
+        </View> */}
+
+       <View
+  style={{
+    ...styles.topicWrap,
+    width: "100%",
+    alignItems: "center",
+    justifyContent: "center",
+  }}
+>
+  <Text
+    style={{
+      ...styles.topicLabel,
+      textAlign: "center",
+      alignSelf: "center",
+      width: "100%",
+    }}
+  >
+    Internship Discipline & Duration
+  </Text>
+
+  <Text
+    style={{
+      ...styles.topicValue,
+      textAlign: "center",
+      alignSelf: "center",
+      width: "100%",
+    }}
+  >
+    {internshipTopic} (12th July 2026 to 12th October 2026)
+  </Text>
+</View>
 
         {/* ---- 2-COLUMN INFO GRID ---- */}
         <View style={styles.grid}>
@@ -495,7 +526,7 @@ const CertificatePDF: React.FC<Props> = ({
             </View>
             <View style={styles.gridCell}>
               <Text style={styles.gridLabel}>Date Issued</Text>
-              <Text style={styles.gridValue}>{issueDate}</Text>
+              <Text style={styles.gridValue}>15 October 2026</Text>
             </View>
           </View>
         </View>
