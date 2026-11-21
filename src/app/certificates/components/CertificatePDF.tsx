@@ -503,7 +503,7 @@ const CertificatePDF: React.FC<Props> = ({
       width: "100%",
     }}
   >
-    {internshipTopic} (12th July 2026 to 12th October 2026)
+    {internshipTopic} (12 July 2026 to 12 October 2026)
   </Text>
 </View>
 
